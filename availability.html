@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ivy House — Availability</title>
+<meta name="description" content="Check dates for enquiry at Ivy House Pune.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--forest:#263b2d;--cream:#f5f0e8;--paper:#fbf9f4;--muted:#77766f;--line:#d9d3c8;--blocked:#dedbd4;--accent:#8b9b83}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--forest);font-family:'DM Sans',sans-serif;font-weight:400}a{color:inherit}.wrap{max-width:980px;margin:0 auto;padding:28px 20px 60px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}.brand{font-family:'Playfair Display',serif;font-size:27px;letter-spacing:.03em}.back{font-size:13px;text-decoration:none;border-bottom:1px solid var(--forest);padding-bottom:3px}.intro{text-align:center;margin:20px auto 28px}.label{text-transform:uppercase;letter-spacing:.2em;font-size:11px;color:var(--muted)}h1{font-family:'Playfair Display',serif;font-weight:400;font-size:42px;margin:10px 0 8px}p{color:#66645d;line-height:1.7}.calendar-card{background:white;border:1px solid var(--line);padding:22px;box-shadow:0 10px 35px rgba(38,59,45,.06)}.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.month{font-family:'Playfair Display',serif;font-size:27px}.arrow{border:1px solid var(--line);background:white;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;color:var(--forest)}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.week div{text-align:center;font-size:11px;color:var(--muted);padding:7px 0;text-transform:uppercase;letter-spacing:.08em}.day{min-height:58px;border:1px solid transparent;background:#faf9f5;cursor:pointer;padding:9px;text-align:left;position:relative;font-size:14px}.day:hover:not(.blocked){border-color:var(--accent)}.day.empty{background:transparent;cursor:default}.day.past{opacity:.38;cursor:default}.day.blocked{background:var(--blocked);color:#888;cursor:not-allowed;text-decoration:line-through}.day.selected{background:var(--forest);color:white}.day.inrange{background:#dfe7df}.status{font-size:11px;color:var(--muted);margin-top:18px;text-align:center}.selection{text-align:center;margin:24px 0 0}.selection strong{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}.selection small{display:block;color:var(--muted);margin-top:7px}.cta{margin-top:18px;display:flex;justify-content:center}.cta a{display:inline-block;background:var(--forest);color:white;text-decoration:none;padding:14px 25px;font-size:13px;letter-spacing:.06em}.note{text-align:center;margin-top:25px;font-size:13px;color:var(--muted)}@media(max-width:600px){.wrap{padding:20px 12px 45px}.top{margin-bottom:25px}.brand{font-size:23px}h1{font-size:34px}.calendar-card{padding:12px}.day{min-height:48px;padding:7px;font-size:13px}.month{font-size:23px}.week,.days{gap:3px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="brand">Ivy House</div><a class="back" href="index.html">Back to Ivy House</a></div>
+  <div class="intro"><div class="label">Availability</div><h1>Choose your dates</h1><p>Dates shown as unavailable are already blocked. Other dates are open for an enquiry — availability is confirmed only by Ivy House.</p></div>
+  <div class="calendar-card">
+    <div class="cal-head"><button class="arrow" id="prev">‹</button><div class="month" id="month"></div><button class="arrow" id="next">›</button></div>
+    <div class="week"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div>
+    <div class="days" id="days"></div>
+    <div class="status" id="status">Loading availability…</div>
+    <div class="selection" id="selection"></div>
+    <div class="cta" id="cta" style="display:none"><a id="enquire" href="index.html#enquiry">Enquire for these dates</a></div>
+  </div>
+  <div class="note">Selecting a date does not reserve it.</div>
+</div>
+<script>
+const SUPABASE_URL='https://yiwmtfbqbynimqvwxosu.supabase.co';
+const SUPABASE_KEY='sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let view=new Date(); view.setDate(1); let blocks=[]; let start=null,end=null;
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pretty=d=>d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+function blockedDate(s){return blocks.some(b=>s>=b.start_date&&s<=b.end_date)}
+function render(){
+ const year=view.getFullYear(),month=view.getMonth();
+ document.getElementById('month').textContent=view.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+ const first=new Date(year,month,1); const offset=(first.getDay()+6)%7; const total=new Date(year,month+1,0).getDate(); const today=iso(new Date());
+ const grid=document.getElementById('days'); grid.innerHTML='';
+ for(let i=0;i<offset;i++){const e=document.createElement('div');e.className='day empty';grid.appendChild(e)}
+ for(let n=1;n<=total;n++){
+  const d=new Date(year,month,n),s=iso(d),e=document.createElement('button'); e.type='button';e.className='day';e.textContent=n;
+  if(s<today)e.classList.add('past');
+  if(blockedDate(s))e.classList.add('blocked');
+  if(start&&s===iso(start))e.classList.add('selected');
+  if(start&&end&&s>iso(start)&&s<iso(end))e.classList.add('inrange');
+  if(!e.classList.contains('blocked')&&!e.classList.contains('past'))e.onclick=()=>pick(d);
+  grid.appendChild(e);
+ }
+}
+function pick(d){
+ if(!start||end){start=d;end=null}
+ else if(d<start){start=d;end=null}
+ else {end=d}
+ const selection=document.getElementById('selection'),cta=document.getElementById('cta');
+ if(start&&!end){selection.innerHTML=`<strong>${pretty(start)}</strong><small>Select a second date for an overnight stay, or enquire for this date.</small>`}
+ if(start&&end){selection.innerHTML=`<strong>${pretty(start)} → ${pretty(end)}</strong><small>Selected dates. We will confirm availability after your enquiry.</small>`}
+ cta.style.display='flex';
+ const checkout=end?iso(end):iso(start);
+ document.getElementById('enquire').href=`index.html?checkin=${iso(start)}&checkout=${checkout}#enquiry`;
+ render();
+}
+async function load(){
+ const {data,error}=await db.from('public_availability').select('start_date,end_date,status');
+ if(error){document.getElementById('status').textContent='Availability could not be loaded. Please enquire directly.';return}
+ blocks=data||[];document.getElementById('status').textContent='Grey dates are unavailable · other dates are open for enquiry';render();
+}
+document.getElementById('prev').onclick=()=>{view.setMonth(view.getMonth()-1);render()};
+document.getElementById('next').onclick=()=>{view.setMonth(view.getMonth()+1);render()};
+load();
+</script>
+</body>
+</html>
