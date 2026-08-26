@@ -1,1 +1,147 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ivy House — Private Calendar</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>:root{--forest:#2d4a2d;--deep:#1e3320;--sage:#7a9e7e;--moss:#4a6741;--cream:#f5f0e8;--warm:#faf8f3;--sand:#e8e0d0;--amber:#c68b3a;--text:#3a3530;--line:#d8d0c3}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--warm);color:var(--text);font-family:'DM Sans',sans-serif}body{overflow-x:hidden}.wrap{max-width:920px;margin:auto;padding:10px 18px 14px}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.brand{font:500 25px 'Playfair Display',serif;color:var(--forest);letter-spacing:.03em}.btn{border:1px solid var(--forest);background:white;color:var(--forest);padding:7px 12px;font:500 11px 'DM Sans',sans-serif;letter-spacing:.05em;cursor:pointer}.btn:hover{background:var(--amber);border-color:var(--amber);color:#fff}.hidden{display:none!important}.login{text-align:center;max-width:460px;margin:42px auto}.card{background:#fff;border:1px solid var(--line);box-shadow:0 8px 28px rgba(45,74,45,.06);padding:12px}.login h2{font:500 23px 'Playfair Display',serif;color:var(--forest);margin:3px 0 6px}.login p{font-size:12px;color:#666;margin:0 0 13px}.login #google{background:var(--forest);color:#fff;border-color:var(--forest)}.login #google:hover{background:var(--amber);border-color:var(--amber)}.msg{font-size:11px;color:#666;margin:6px 0}.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.month{font:500 22px 'Playfair Display',serif;color:var(--forest)}.calhead .btn{width:31px;height:31px;padding:0;font-size:17px}.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.dow{text-align:center;font-size:9px;color:var(--moss);padding:2px 0;text-transform:uppercase;letter-spacing:.1em}.day{min-height:34px;border:1px solid #eee7dc;background:#faf9f5;cursor:pointer;text-align:left;padding:4px 5px;font:400 12px 'DM Sans',sans-serif;color:var(--forest)}.day:hover{border-color:var(--amber);background:#fffaf1}.day.blocked{background:var(--sand);border-color:#d4c9b8;color:#705f4a}.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px}.input{padding:7px 8px;width:100%;box-sizing:border-box;border:1px solid var(--line);background:#fff;font:400 11px 'DM Sans',sans-serif;color:var(--text)}label{display:block;font-size:10px;color:var(--moss);margin-bottom:3px}.action-row{display:flex;gap:7px;align-items:center;margin-top:6px;flex-wrap:wrap}.action-row .btn.primary{background:var(--forest);color:#fff}.action-row .btn.primary:hover{background:var(--amber);border-color:var(--amber)}.status-note{display:grid;grid-template-columns:1fr 185px;gap:8px;margin-top:7px}.subtle{font-size:10px;color:#777;margin:4px 0 0}.admin-label{text-align:center;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin:0 0 2px}@media(max-width:600px){.wrap{padding:8px 8px 12px}.head{margin-bottom:5px}.brand{font-size:21px}.btn{padding:6px 9px}.card{padding:8px}.month{font-size:19px}.calhead .btn{width:29px;height:29px}.grid{gap:2px}.dow{font-size:8px;padding:2px 0}.day{min-height:31px;padding:3px 4px;font-size:10px}.fields,.status-note{grid-template-columns:1fr;gap:5px}.action-row{margin-top:5px}.login{margin:38px auto}.login h2{font-size:21px}}@media(min-width:601px) and (max-height:800px){.wrap{padding-top:7px;padding-bottom:9px}.head{margin-bottom:4px}.card{padding:9px}.day{min-height:31px}.fields{margin-top:6px}.status-note{margin-top:5px}.action-row{margin-top:5px}}</style></head><body><div class="wrap"><div class="head"><div class="brand">Ivy House — Private Calendar</div><button class="btn" id="logout" style="display:none">Sign out</button></div><section id="login" class="login card"><div class="admin-label">Private calendar</div><h2>Private calendar</h2><p>Sign in with your Google account to manage Ivy House dates.</p><button class="btn" id="google">Sign in with Google</button><div class="msg" id="loginmsg"></div></section><section id="app" class="hidden"><div class="card"><div class="calhead"><button class="btn" id="prev" aria-label="Previous month">‹</button><div class="month" id="month"></div><button class="btn" id="next" aria-label="Next month">›</button></div><div class="grid" id="grid"></div><div class="msg" id="msg">Tap a date to select it.</div><div class="fields"><div><label>From</label><input class="input" id="from" type="date"></div><div><label>To</label><input class="input" id="to" type="date"></div></div><div class="status-note"><input class="input" id="note" placeholder="Private note — only you can see this"><select class="input" id="status"><option value="booked">Confirmed booking</option><option value="blocked">Blocked / unavailable</option></select></div><div class="action-row"><button class="btn primary" id="save">Block dates</button><button class="btn" id="remove" style="display:none">Remove selected block</button><span class="subtle" id="result"></span></div></div></section></div><script>const SUPABASE_URL='https://yiwmtfbqbynimqvwxosu.supabase.co',KEY='sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu',ADMIN='sunilbane19@gmail.com',REDIRECT='https://sunilbane19.github.io/ivyhouse-website/admin.html';const db=supabase.createClient(SUPABASE_URL,KEY);let view=new Date();view.setDate(1);let blocks=[],selectedId=null;const pad=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;function show(id,on){document.getElementById(id).classList.toggle('hidden',!on)}function setLoginMessage(t){document.getElementById('loginmsg').textContent=t||''}async function init(){const {data:{session},error}=await db.auth.getSession();if(error){setLoginMessage(error.message);return}if(session?.user?.email===ADMIN){show('login',false);show('app',true);document.getElementById('logout').style.display='block';load()}else{show('app',false);show('login',true);document.getElementById('logout').style.display='none'}}document.getElementById('google').onclick=async()=>{const b=document.getElementById('google');b.disabled=true;setLoginMessage('Opening Google…');const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:REDIRECT,queryParams:{access_type:'offline',prompt:'select_account'}}});if(error){setLoginMessage(error.message);b.disabled=false}};document.getElementById('logout').onclick=async()=>{const b=document.getElementById('logout');b.disabled=true;const {error}=await db.auth.signOut({scope:'local'});if(error){b.disabled=false;document.getElementById('result').textContent=error.message;return}show('app',false);show('login',true);document.getElementById('logout').style.display='none';setLoginMessage('Signed out. Click Sign in with Google to sign in again.');history.replaceState({},'',REDIRECT)};db.auth.onAuthStateChange((event,session)=>{if(session?.user?.email===ADMIN){show('login',false);show('app',true);document.getElementById('logout').style.display='block';if(event==='SIGNED_IN')setLoginMessage('');load()}else if(event==='SIGNED_OUT'||!session){show('app',false);show('login',true);document.getElementById('logout').style.display='none'}});async function load(){const {data,error}=await db.from('availability_blocks').select('id,start_date,end_date,status,private_note,created_at').order('start_date');if(error){document.getElementById('result').textContent=error.message;return}blocks=data||[];render()}function render(){const y=view.getFullYear(),m=view.getMonth();document.getElementById('month').textContent=view.toLocaleDateString('en-IN',{month:'long',year:'numeric'});const g=document.getElementById('grid');g.innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>`<div class="dow">${x}</div>`).join('');const first=new Date(y,m,1),off=(first.getDay()+6)%7,total=new Date(y,m+1,0).getDate();for(let i=0;i<off;i++)g.innerHTML+='<div></div>';for(let n=1;n<=total;n++){const d=new Date(y,m,n),s=iso(d),b=blocks.find(x=>s>=x.start_date&&s<=x.end_date);const el=document.createElement('button');el.type='button';el.className='day'+(b?' blocked':'');el.textContent=n;el.onclick=()=>{if(b){selectedId=b.id;document.getElementById('from').value=b.start_date;document.getElementById('to').value=b.end_date;document.getElementById('note').value=b.private_note||'';document.getElementById('status').value=b.status;document.getElementById('remove').style.display='inline-block';document.getElementById('msg').textContent='Selected block. You can edit it or remove it.'}else{selectedId=null;document.getElementById('from').value=s;document.getElementById('to').value=s;document.getElementById('note').value='';document.getElementById('status').value='blocked';document.getElementById('remove').style.display='none';document.getElementById('msg').textContent='New block selected.'}};g.appendChild(el)}}document.getElementById('prev').onclick=()=>{view.setMonth(view.getMonth()-1);render()};document.getElementById('next').onclick=()=>{view.setMonth(view.getMonth()+1);render()};document.getElementById('save').onclick=async()=>{const start=document.getElementById('from').value,end=document.getElementById('to').value,note=document.getElementById('note').value,status=document.getElementById('status').value;if(!start||!end||end<start){document.getElementById('result').textContent='Please enter valid dates.';return}const payload={start_date:start,end_date:end,status,private_note:note};let q=selectedId?db.from('availability_blocks').update(payload).eq('id',selectedId):db.from('availability_blocks').insert(payload);const {error}=await q;if(error)document.getElementById('result').textContent=error.message;else{document.getElementById('result').textContent='Saved.';selectedId=null;document.getElementById('remove').style.display='none';await load()}};document.getElementById('remove').onclick=async()=>{if(!selectedId)return;if(!confirm('Remove this block?'))return;const {error}=await db.from('availability_blocks').delete().eq('id',selectedId);if(error)document.getElementById('result').textContent=error.message;else{selectedId=null;document.getElementById('remove').style.display='none';document.getElementById('result').textContent='Removed.';await load()}};init();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ivy House — Private Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--forest:#2d4a2d;--deep:#1e3320;--sage:#7a9e7e;--moss:#4a6741;--cream:#f5f0e8;--warm:#faf8f3;--sand:#e8e0d0;--amber:#c68b3a;--text:#3a3530;--line:#d8d0c3}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--warm);color:var(--text);font-family:'DM Sans',sans-serif}
+body{overflow-x:hidden}
+button,input,select{font:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 48px 56px}
+.head{display:flex;justify-content:space-between;align-items:center;padding:0 0 22px;border-bottom:1px solid rgba(45,74,45,.12);margin-bottom:42px}
+.brand{font:500 24px 'Playfair Display',serif;color:var(--forest);letter-spacing:.03em}
+.btn{border:1px solid var(--forest);background:transparent;color:var(--forest);padding:11px 22px;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btn:hover{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn:disabled{opacity:.55;cursor:wait}
+.hidden{display:none!important}
+.card{background:#fff;border:1px solid rgba(216,208,195,.9);box-shadow:0 12px 38px rgba(45,74,45,.07)}
+.login{max-width:560px;margin:72px auto 40px;padding:48px 52px;text-align:center}
+.admin-label{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin:0 0 15px}
+.login h2{font:500 clamp(2rem,4vw,2.7rem)/1.15 'Playfair Display',serif;color:var(--forest);margin:0 0 15px}
+.login .divider{width:42px;height:1px;background:var(--sage);margin:0 auto 20px}
+.login p{font-size:13px;line-height:1.8;color:#6b665f;max-width:390px;margin:0 auto 28px}
+.login #google{background:var(--forest);color:#fff;border-color:var(--forest);min-width:220px}
+.login #google:hover{background:var(--amber);border-color:var(--amber)}
+.msg{font-size:11px;line-height:1.5;color:#777;margin:14px 0 0;min-height:16px}
+.app-intro{margin-bottom:20px}
+.app-intro .eyebrow{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.app-intro h1{font:500 clamp(2rem,4vw,2.8rem)/1.15 'Playfair Display',serif;color:var(--forest);margin:0}
+.calendar-card{padding:28px}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.month{font:500 26px 'Playfair Display',serif;color:var(--forest)}
+.calhead .btn{width:38px;height:38px;padding:0;font-size:20px;letter-spacing:0}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow{text-align:center;font-size:9px;color:var(--moss);padding:5px 0 8px;text-transform:uppercase;letter-spacing:.13em}
+.day{min-height:54px;border:1px solid #eee7dc;background:#faf9f5;cursor:pointer;text-align:left;padding:8px;font-size:12px;color:var(--forest);transition:all .2s}
+.day:hover{border-color:var(--amber);background:#fffaf1;transform:translateY(-1px)}
+.day.blocked{background:var(--sand);border-color:#d4c9b8;color:#705f4a}
+.msg#msg{text-align:left;margin:12px 0 0;color:#777}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.input{padding:12px 13px;width:100%;border:1px solid var(--line);background:#fff;font-size:12px;color:var(--text);outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--sage)}
+label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--moss);margin-bottom:6px}
+.status-note{display:grid;grid-template-columns:1fr 230px;gap:16px;margin-top:16px}
+.action-row{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.action-row .btn.primary{background:var(--amber);border-color:var(--amber);color:#fff}
+.action-row .btn.primary:hover{background:var(--forest);border-color:var(--forest)}
+.subtle{font-size:11px;color:#777;margin-left:4px}
+@media(max-width:768px){
+ .wrap{padding:20px 24px 42px}
+ .head{margin-bottom:30px;padding-bottom:18px}
+ .brand{font-size:21px}
+ .login{margin:46px auto 30px;padding:38px 26px}
+ .calendar-card{padding:18px}
+ .fields,.status-note{grid-template-columns:1fr;gap:12px}
+ .day{min-height:46px;padding:6px;font-size:11px}
+ .grid{gap:3px}
+ .month{font-size:23px}
+}
+@media(max-width:480px){
+ .wrap{padding:16px 14px 32px}
+ .head{margin-bottom:22px}
+ .brand{font-size:18px}
+ .head .btn{padding:9px 12px;font-size:9px}
+ .login{margin:30px auto 20px;padding:32px 20px}
+ .login h2{font-size:2rem}
+ .calendar-card{padding:12px}
+ .calhead .btn{width:34px;height:34px}
+ .dow{font-size:7px}
+ .day{min-height:39px;padding:5px;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="brand">Ivy House — Private Calendar</div>
+    <button class="btn" id="logout" style="display:none">Sign out</button>
+  </header>
+
+  <section id="login" class="login card">
+    <div class="admin-label">Private calendar</div>
+    <h2>Welcome to Ivy House</h2>
+    <div class="divider"></div>
+    <p>Sign in with your Google account to manage Ivy House availability and private booking dates.</p>
+    <button class="btn" id="google">Sign in with Google</button>
+    <div class="msg" id="loginmsg"></div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="app-intro">
+      <div class="eyebrow">Private calendar</div>
+      <h1>Manage Ivy House availability</h1>
+    </div>
+    <div class="card calendar-card">
+      <div class="calhead">
+        <button class="btn" id="prev" aria-label="Previous month">‹</button>
+        <div class="month" id="month"></div>
+        <button class="btn" id="next" aria-label="Next month">›</button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="msg" id="msg">Tap a date to select it.</div>
+      <div class="fields">
+        <div><label>From</label><input class="input" id="from" type="date"></div>
+        <div><label>To</label><input class="input" id="to" type="date"></div>
+      </div>
+      <div class="status-note">
+        <input class="input" id="note" placeholder="Private note — only you can see this">
+        <select class="input" id="status">
+          <option value="booked">Confirmed booking</option>
+          <option value="blocked">Blocked / unavailable</option>
+        </select>
+      </div>
+      <div class="action-row">
+        <button class="btn primary" id="save">Block dates</button>
+        <button class="btn" id="remove" style="display:none">Remove selected block</button>
+        <span class="subtle" id="result"></span>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+const SUPABASE_URL='https://yiwmtfbqbynimqvwxosu.supabase.co',KEY='sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu',ADMIN='sunilbane19@gmail.com',REDIRECT='https://sunilbane19.github.io/ivyhouse-website/admin.html';
+const db=supabase.createClient(SUPABASE_URL,KEY);
+let view=new Date();view.setDate(1);let blocks=[],selectedId=null;
+const pad=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+function show(id,on){document.getElementById(id).classList.toggle('hidden',!on)}
+function setLoginMessage(t){document.getElementById('loginmsg').textContent=t||''}
+async function init(){const {data:{session},error}=await db.auth.getSession();if(error){setLoginMessage(error.message);return}if(session?.user?.email===ADMIN){show('login',false);show('app',true);document.getElementById('logout').style.display='block';load()}else{show('app',false);show('login',true);document.getElementById('logout').style.display='none'}}
+document.getElementById('google').onclick=async()=>{const b=document.getElementById('google');b.disabled=true;setLoginMessage('Opening Google…');const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:REDIRECT,queryParams:{access_type:'offline',prompt:'select_account'}}});if(error){setLoginMessage(error.message);b.disabled=false}};
+document.getElementById('logout').onclick=async()=>{const b=document.getElementById('logout');b.disabled=true;const {error}=await db.auth.signOut({scope:'local'});if(error){b.disabled=false;document.getElementById('result').textContent=error.message;return}show('app',false);show('login',true);document.getElementById('logout').style.display='none';setLoginMessage('Signed out. Click Sign in with Google to sign in again.');history.replaceState({},'',REDIRECT)};
+db.auth.onAuthStateChange((event,session)=>{if(session?.user?.email===ADMIN){show('login',false);show('app',true);document.getElementById('logout').style.display='block';if(event==='SIGNED_IN')setLoginMessage('');load()}else if(event==='SIGNED_OUT'||!session){show('app',false);show('login',true);document.getElementById('logout').style.display='none'}});
+async function load(){const {data,error}=await db.from('availability_blocks').select('id,start_date,end_date,status,private_note,created_at').order('start_date');if(error){document.getElementById('result').textContent=error.message;return}blocks=data||[];render()}
+function render(){const y=view.getFullYear(),m=view.getMonth();document.getElementById('month').textContent=view.toLocaleDateString('en-IN',{month:'long',year:'numeric'});const g=document.getElementById('grid');g.innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(x=>`<div class="dow">${x}</div>`).join('');const first=new Date(y,m,1),off=(first.getDay()+6)%7,total=new Date(y,m+1,0).getDate();for(let i=0;i<off;i++)g.innerHTML+='<div></div>';for(let n=1;n<=total;n++){const d=new Date(y,m,n),s=iso(d),b=blocks.find(x=>s>=x.start_date&&s<=x.end_date);const el=document.createElement('button');el.type='button';el.className='day'+(b?' blocked':'');el.textContent=n;el.onclick=()=>{if(b){selectedId=b.id;document.getElementById('from').value=b.start_date;document.getElementById('to').value=b.end_date;document.getElementById('note').value=b.private_note||'';document.getElementById('status').value=b.status;document.getElementById('remove').style.display='inline-block';document.getElementById('msg').textContent='Selected block. You can edit it or remove it.'}else{selectedId=null;document.getElementById('from').value=s;document.getElementById('to').value=s;document.getElementById('note').value='';document.getElementById('status').value='blocked';document.getElementById('remove').style.display='none';document.getElementById('msg').textContent='New block selected.'}};g.appendChild(el)}}
+document.getElementById('prev').onclick=()=>{view.setMonth(view.getMonth()-1);render()};document.getElementById('next').onclick=()=>{view.setMonth(view.getMonth()+1);render()};
+document.getElementById('save').onclick=async()=>{const start=document.getElementById('from').value,end=document.getElementById('to').value,note=document.getElementById('note').value,status=document.getElementById('status').value;if(!start||!end||end<start){document.getElementById('result').textContent='Please enter valid dates.';return}const payload={start_date:start,end_date:end,status,private_note:note};let q=selectedId?db.from('availability_blocks').update(payload).eq('id',selectedId):db.from('availability_blocks').insert(payload);const {error}=await q;if(error)document.getElementById('result').textContent=error.message;else{document.getElementById('result').textContent='Saved.';selectedId=null;document.getElementById('remove').style.display='none';await load()}};
+document.getElementById('remove').onclick=async()=>{if(!selectedId)return;if(!confirm('Remove this block?'))return;const {error}=await db.from('availability_blocks').delete().eq('id',selectedId);if(error)document.getElementById('result').textContent=error.message;else{selectedId=null;document.getElementById('remove').style.display='none';document.getElementById('result').textContent='Removed.';await load()}};
+init();
+</script>
+</body>
+</html>
