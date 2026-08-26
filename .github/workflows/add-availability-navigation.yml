@@ -1,0 +1,61 @@
+name: Add Availability navigation
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-navigation:
+    if: github.actor == 'sunilbane19'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add Availability links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          replacements = [
+              (
+                  '    <li><a href="#daytime" data-page-link="daytime">Daytime Gatherings</a></li>\n    <li><a href="#lunch" data-page-link="lunch" class="coming-soon">Lazy Lunches</a></li>',
+                  '    <li><a href="#daytime" data-page-link="daytime">Daytime Gatherings</a></li>\n    <li><a href="availability.html">Availability</a></li>\n    <li><a href="#lunch" data-page-link="lunch" class="coming-soon">Lazy Lunches</a></li>'
+              ),
+              (
+                  '  <a href="#daytime" data-page-link="daytime">Daytime Gatherings</a>\n  <a href="#lunch" data-page-link="lunch">Lazy Lunches</a>',
+                  '  <a href="#daytime" data-page-link="daytime">Daytime Gatherings</a>\n  <a href="availability.html">Availability</a>\n  <a href="#lunch" data-page-link="lunch">Lazy Lunches</a>'
+              ),
+              (
+                  '          <li><a href="#daytime" data-page-link="daytime">Daytime Gatherings</a></li>\n          <li><a href="#lunch" data-page-link="lunch">Lazy Lunches</a></li>',
+                  '          <li><a href="#daytime" data-page-link="daytime">Daytime Gatherings</a></li>\n          <li><a href="availability.html">Availability</a></li>\n          <li><a href="#lunch" data-page-link="lunch">Lazy Lunches</a></li>'
+              ),
+              (
+                  '      "name": "Daytime Gatherings",\n      "url": "https://ivyhouse.in/#daytime"\n    },\n    {\n      "@type": "SiteNavigationElement",\n      "name": "Gallery",',
+                  '      "name": "Daytime Gatherings",\n      "url": "https://ivyhouse.in/#daytime"\n    },\n    {\n      "@type": "SiteNavigationElement",\n      "name": "Availability",\n      "url": "https://ivyhouse.in/availability.html"\n    },\n    {\n      "@type": "SiteNavigationElement",\n      "name": "Gallery",'
+              ),
+          ]
+
+          for old, new in replacements:
+              if old not in text:
+                  raise SystemExit(f'Expected navigation pattern not found: {old[:80]!r}')
+              text = text.replace(old, new)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit navigation update
+        run: |
+          git config user.name "sunilbane19"
+          git config user.email "sunilbane19@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Add Availability to site navigation"
+          git push
