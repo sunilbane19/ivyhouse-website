@@ -1932,6 +1932,8 @@ function toggleMobileMenu(){
     updateEnquiryWhatsAppLink();
   }
 
+  prefillEnquiryDatesFromUrl();
+
   // ── Gallery filter (category-wide: each card has data-gallery-categories) ──
   document.querySelectorAll('[data-gallery-filter]').forEach(btn => {
     btn.addEventListener('click', function() {
