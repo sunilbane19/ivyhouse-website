@@ -85,7 +85,7 @@ if(!window.supabase || typeof window.supabase.createClient!=='function'){
  document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';
  throw new Error('Supabase authentication library failed to load');
 }
-const db=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:'ivyhouse-admin-auth'}});
+const db=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:'ivyhouse-admin-auth'}});
 const loginmsg=document.getElementById('loginmsg'), google=document.getElementById('google'), logout=document.getElementById('logout');
 
 const navAvailability=document.getElementById('navAvailability'), navGallery=document.getElementById('navGallery');
@@ -107,11 +107,15 @@ function setLoginMessage(t){document.getElementById('loginmsg').textContent=t||'
 
 async function handleOAuthCallback(){
  try{
-  // Supabase may return the implicit-flow tokens in either the URL hash or
-  // query string depending on the hosting/browser. Explicitly consume them
-  // so the admin page does not get stuck on the login screen.
   const params=new URLSearchParams(window.location.search);
   const hash=new URLSearchParams(window.location.hash.replace(/^#/,''));
+  const code=params.get('code');
+  if(code){
+   const {error}=await db.auth.exchangeCodeForSession(code);
+   if(error) throw error;
+   window.history.replaceState({},document.title,window.location.pathname);
+   return;
+  }
   const access_token=params.get('access_token')||hash.get('access_token');
   const refresh_token=params.get('refresh_token')||hash.get('refresh_token');
   if(access_token && refresh_token){
