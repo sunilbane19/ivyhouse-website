@@ -83,7 +83,7 @@ const ADMIN='sunilbane19@gmail.com'.toLowerCase();
 const REDIRECT=window.location.origin+window.location.pathname;
 const BUCKET='ivy-house-gallery';
 if(!window.supabase){document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';throw new Error('Supabase authentication library failed to load');}
-const db=window.supabase.createClient(SUPABASE_URL,KEY);
+const db=window.supabase.createClient(SUPABASE_URL,KEY,{auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true,storageKey:'ivyhouse-admin-auth'}});
 const loginmsg=document.getElementById('loginmsg'), google=document.getElementById('google'), logout=document.getElementById('logout');
 
 const navAvailability=document.getElementById('navAvailability'), navGallery=document.getElementById('navGallery');
@@ -109,13 +109,8 @@ async function handleOAuthCallback(){
   const params=new URLSearchParams(hash);
   const access_token=params.get('access_token');
   const refresh_token=params.get('refresh_token');
-  const code=new URLSearchParams(window.location.search).get('code');
   if(access_token&&refresh_token){
    const {error}=await db.auth.setSession({access_token,refresh_token});
-   if(error) throw error;
-   window.history.replaceState({},document.title,window.location.pathname);
-  }else if(code){
-   const {error}=await db.auth.exchangeCodeForSession(code);
    if(error) throw error;
    window.history.replaceState({},document.title,window.location.pathname);
   }
@@ -132,16 +127,23 @@ async function init(){
  else {show('app',false);show('login',true)}
 }
 if(document.getElementById('google')) document.getElementById('google').onclick=async e=>{
+ e.preventDefault();
  setLoginMessage('Opening Google…');
- google.disabled=true;
- const {error}=await db.auth.signInWithOAuth({
+ google.style.pointerEvents='none';
+ const {data,error}=await db.auth.signInWithOAuth({
   provider:'google',
   options:{redirectTo:REDIRECT,queryParams:{access_type:'offline',prompt:'select_account'}}
  });
- if(error){google.disabled=false;setLoginMessage(error.message);console.error('Google sign-in error:',error)}
+ if(error){google.style.pointerEvents='auto';setLoginMessage(error.message);console.error('Google sign-in error:',error)}
+ else if(data?.url){window.location.assign(data.url)}
 };
 document.getElementById('logout').onclick=async()=>{await db.auth.signOut({scope:'local'});location.href=REDIRECT};
-db.auth.onAuthStateChange((event,session)=>{if(session?.user?.email?.trim().toLowerCase()===ADMIN){show('login',false);show('app',true);if(event==='SIGNED_IN'){loadAvailability();loadGallery()}}else if(event==='SIGNED_OUT'||!session){show('app',false);show('login',true)}});
+db.auth.onAuthStateChange((event,session)=>{
+ if(session?.user?.email?.trim().toLowerCase()===ADMIN){
+  show('login',false);show('app',true);
+  if(event==='SIGNED_IN') {loadAvailability();loadGallery()}
+ }else if(event==='SIGNED_OUT'||!session){show('app',false);show('login',true)}
+});
 
 document.getElementById('navAvailability').onclick=()=>switchView('availability');
 document.getElementById('navGallery').onclick=()=>switchView('gallery');
