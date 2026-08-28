@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c88717">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Class Reunion">
+<title>Class Reunion — COEP ENTC 1983</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--cream:#fbf5e9;--paper:#fffdf8;--gold:#c98716;--gold2:#e4ad48;--brown:#4b2e16;--muted:#8d765d;--line:#e3d3b8;--coral:#e96868;--green:#58745c;--ink:#251b13}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+header{position:sticky;top:0;z-index:30;background:rgba(255,253,248,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1100px;margin:auto;padding:13px 18px;display:flex;align-items:center;gap:12px}.brand{margin-right:auto}.brand b{display:block;font:600 22px 'Playfair Display',serif;color:var(--brown)}.brand span{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.nav button{border:0;background:transparent;color:var(--brown);padding:9px 10px;font-weight:700;font-size:11px}.nav .active{background:var(--gold);color:#fff;border-radius:10px}.nav .admin{border:1px solid var(--gold);border-radius:10px}
+main{max-width:1100px;margin:auto;padding:22px 16px 70px}.hero{padding:16px 4px 18px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}h1{font:600 42px/1.05 'Playfair Display',serif;color:var(--brown);margin:5px 0 6px}.hero p{margin:0;color:var(--muted);font-size:13px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 24px rgba(84,57,22,.07)}.pad{padding:18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.full{grid-column:1/-1}
+.progress-card{display:flex;align-items:center;gap:16px;padding:15px 17px;margin:5px 0 18px}.progress-ring{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) var(--pct),#eee3d2 0)}.progress-ring:after{content:'';width:48px;height:48px;background:var(--paper);border-radius:50%;grid-area:1/1}.progress-ring b{grid-area:1/1;z-index:1;font-size:13px;color:var(--brown)}.progress-text b{display:block;color:var(--brown);font-size:18px}.progress-text span{font-size:11px;color:var(--muted)}
+.searchbar{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:13px}.input,select,textarea{width:100%;border:1px solid var(--line);background:#fffaf1;border-radius:11px;padding:12px 13px;color:var(--ink);outline:none}textarea{min-height:90px;resize:vertical}.input:focus,select:focus,textarea:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(201,135,22,.1)}label{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.btn{border:1px solid var(--gold);background:transparent;color:var(--brown);padding:11px 15px;border-radius:11px;font-weight:700}.btn.primary{background:var(--gold);color:#fff}.btn.soft{background:#f4e5cb}.btn.danger{border-color:#f2aaaa;color:#c94d4d}.btn:disabled{opacity:.55;cursor:not-allowed}
+.directory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.person{padding:14px}.avatar{width:62px;height:62px;border-radius:50%;background:#f7e6b7;border:2px solid #f0cf6d;display:grid;place-items:center;font:600 26px 'Playfair Display',serif;color:#a64e08;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.person-head{display:flex;gap:11px;align-items:center}.person h3{font:600 21px 'Playfair Display',serif;color:var(--brown);margin:0}.person .where{font-size:11px;color:var(--muted);margin-top:3px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}.chip{font-size:10px;padding:5px 7px;border-radius:999px;background:#f5ead8;color:#725435}.person .actions{display:flex;gap:7px;margin-top:12px}.linkbtn{font-size:11px;color:var(--gold);font-weight:700;text-decoration:none}.empty{text-align:center;padding:35px;color:var(--muted);font-size:13px}
+.form-title{font:600 27px 'Playfair Display',serif;color:var(--brown);margin:0 0 5px}.form-sub{font-size:11px;color:var(--muted);margin:0 0 16px}.photo-row{display:flex;gap:14px;align-items:center;margin-bottom:16px}.photo-actions{display:flex;flex-direction:column;gap:8px}.same{display:flex;gap:7px;align-items:center;font-size:11px;color:var(--muted);margin-top:6px}.same input{width:auto}.section{margin-bottom:18px}.section h2{font:600 22px 'Playfair Display',serif;color:var(--brown);margin:0 0 11px}.notice{padding:12px 14px;border-radius:12px;background:#fff3d8;border:1px solid #ecd49d;color:#725435;font-size:12px;line-height:1.55}.success{background:#edf5ee;border-color:#c8dccb;color:#4d6b52}.error{background:#fff0f0;border-color:#f0c1c1;color:#9b4c4c}.top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.admin-table{width:100%;border-collapse:collapse;font-size:11px}.admin-table th,.admin-table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.admin-table th{color:var(--muted);font-size:9px;letter-spacing:.08em;text-transform:uppercase}.admin-table select{padding:7px 8px;border-radius:8px;font-size:11px}.pending{display:grid;gap:9px}.claim{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fffaf1}.claim strong{color:var(--brown)}.claim small{display:block;color:var(--muted);margin:3px 0 9px}.modal{position:fixed;inset:0;background:rgba(47,31,18,.48);z-index:100;display:grid;place-items:center;padding:16px}.modal .card{width:min(720px,100%);max-height:90vh;overflow:auto}.close{float:right;border:0;background:transparent;font-size:24px;color:var(--muted)}
+@media(max-width:800px){h1{font-size:36px}.directory{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.nav{padding:11px 12px}.brand b{font-size:19px}.brand span{font-size:8px}.nav button{font-size:9px;padding:8px 7px}.grid,.directory{grid-template-columns:1fr}.searchbar{grid-template-columns:1fr}.progress-card{align-items:flex-start}.person{padding:15px}.full{grid-column:auto}main{padding:18px 11px 60px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <div class="brand"><b>Class Reunion</b><span>COEP ENTC 1983</span></div>
+  <button id="navDirectory" class="active">Classmates</button>
+  <button id="navProfile">My Profile</button>
+  <button id="navAdmin" class="admin hidden">Admin</button>
+  <button id="navSignout" class="hidden">Sign out</button>
+</div></header>
+
+<main>
+<section id="loginView">
+  <div class="hero"><div class="eyebrow">COEP ENTC 1983</div><h1>Class Reunion</h1><p>A private directory for our classmates.</p></div>
+  <div class="card pad" style="max-width:560px;margin:10px auto">
+    <h2 class="form-title">Welcome</h2>
+    <p class="form-sub">Open this link from WhatsApp, enter your email and we'll send you a one-time sign-in link. No password and no SMS.</p>
+    <div class="section"><label>Email address</label><input class="input" id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email"></div>
+    <button class="btn primary" id="sendLink">Send sign-in link</button>
+    <div id="loginMsg" class="notice hidden" style="margin-top:12px"></div>
+    <p style="font-size:10px;color:var(--muted);margin:14px 0 0">If this is your first visit, you'll be asked to match yourself to the class list.</p>
+  </div>
+</section>
+
+<section id="claimView" class="hidden">
+  <div class="hero"><div class="eyebrow">One-time setup</div><h1>Find your class record</h1><p>Your email is verified. Match yourself to the pre-loaded class list.</p></div>
+  <div class="card pad" style="max-width:620px;margin:auto">
+    <div class="notice">For V1, use the <b>full name and mobile number exactly as they appear in the class list</b>. Later we'll add WhatsApp OTP for stronger automatic verification.</div>
+    <div class="grid" style="margin-top:16px">
+      <div><label>Full name</label><input class="input" id="claimName" placeholder="Full name"></div>
+      <div><label>Mobile number</label><input class="input" id="claimPhone" placeholder="+91 ..."></div>
+    </div>
+    <div class="top-actions" style="margin-top:14px"><button class="btn primary" id="claimBtn">Match my record</button><button class="btn" id="claimSignout">Sign out</button></div>
+    <div id="claimMsg" class="notice hidden"></div>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+  <div class="hero"><div class="eyebrow">COEP ENTC 1983</div><h1>Class Reunion</h1><p>Find your classmates and keep your own details up to date.</p></div>
+  <div class="progress-card card" id="progressCard"><div class="progress-ring" id="progressRing"><b id="progressPct">0%</b></div><div class="progress-text"><b id="progressText">0 of 0 classmates completed</b><span>Completion is based on the essential profile fields.</span></div></div>
+  <div id="directoryPanel">
+    <div class="searchbar"><input class="input" id="search" placeholder="Search name, city, profession or interests…"><button class="btn soft" id="clearSearch">Clear</button></div>
+    <div class="directory" id="directory"></div>
+  </div>
+  <div id="profilePanel" class="hidden"></div>
+  <div id="adminPanel" class="hidden"></div>
+</section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="card pad"><button class="close" id="modalClose">×</button><div id="modalBody"></div></div></div>
+
+<script>
+const SUPABASE_URL='https://yiwmtfbqbynimqvwxosu.supabase.co';
+const SUPABASE_KEY='sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:'class-reunion-auth'}});
+const REDIRECT=window.location.origin+window.location.pathname;
+let session=null, me=null, role='user', members=[], privateProfile=null, currentPhotoUrl=null, adminEditingId=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const normPhone=s=>String(s??'').replace(/[^0-9]/g,'');
+const initials=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+function notice(el,msg,type=''){el.textContent=msg;el.className='notice '+type;el.classList.remove('hidden')}
+function hide(el){el.classList.add('hidden')}
+function show(el){el.classList.remove('hidden')}
+function switchNav(which){
+  ['navDirectory','navProfile','navAdmin'].forEach(x=>$(x).classList.remove('active'));
+  if(which==='directory') $('navDirectory').classList.add('active');
+  if(which==='profile') $('navProfile').classList.add('active');
+  if(which==='admin') $('navAdmin').classList.add('active');
+  $('directoryPanel').classList.toggle('hidden',which!=='directory');
+  $('profilePanel').classList.toggle('hidden',which!=='profile');
+  $('adminPanel').classList.toggle('hidden',which!=='admin');
+  if(which==='profile') renderProfile();
+  if(which==='admin') renderAdmin();
+}
+function setLoggedOut(){
+  hide($('loginView'));hide($('claimView'));hide($('appView'));hide($('navDirectory'));hide($('navProfile'));hide($('navAdmin'));hide($('navSignout'));show($('loginView'));
+}
+function setLoggedIn(){
+  hide($('loginView'));hide($('claimView'));show($('appView'));show($('navDirectory'));show($('navProfile'));show($('navSignout'));
+  if(role==='admin') show($('navAdmin')); else hide($('navAdmin'));
+}
+async function loadMe(){
+  const {data:{user}}=await db.auth.getUser(); session=user;
+  if(!user){setLoggedOut();return}
+  const {data:row,error}=await db.from('reunion_members').select('*').eq('auth_user_id',user.id).maybeSingle();
+  if(error){console.error(error);return}
+  if(!row){
+    setLoggedOut();hide($('loginView'));show($('claimView'));hide($('navDirectory'));hide($('navProfile'));hide($('navAdmin'));show($('navSignout'));
+    const {data:claim}=await db.from('reunion_pending_claims').select('*').eq('auth_user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle();
+    if(claim && claim.status==='pending') notice($('claimMsg'),'Your matching request is pending admin review.','');
+    return;
+  }
+  me=row;
+  const {data:rr}=await db.from('reunion_roles').select('role').eq('member_id',row.id).maybeSingle();
+  role=rr?.role||'user';
+  setLoggedIn();
+  await loadDirectory();
+  switchNav('directory');
+}
+async function loadDirectory(){
+  const {data,error}=await db.from('reunion_directory').select('*').order('full_name');
+  if(error){console.error(error);notice($('loginMsg'),error.message,'error');return}
+  members=data||[];
+  const total=members.filter(m=>!m.is_test_record).length;
+  const completed=members.filter(m=>!m.is_test_record&&m.profile_completed).length;
+  const pct=total?Math.round(completed/total*100):0;
+  $('progressPct').textContent=pct+'%';$('progressRing').style.setProperty('--pct',pct+'%');
+  $('progressText').textContent=completed+' of '+total+' classmates completed';
+  renderDirectory();
+}
+function renderDirectory(){
+  const q=$('search').value.trim().toLowerCase();
+  const rows=members.filter(m=>!q || [m.full_name,m.preferred_name,m.current_city,m.current_state,m.current_country,m.profession,m.company,m.hobbies,m.about,m.food_preference,m.drink_preference].join(' ').toLowerCase().includes(q));
+  if(!rows.length){$('directory').innerHTML='<div class="card empty" style="grid-column:1/-1">No classmates match your search.</div>';return}
+  $('directory').innerHTML=rows.map(m=>{
+    const where=[m.current_city,m.current_state,m.current_country].filter(Boolean).join(', ');
+    const avatar=m.photo_path?'<img data-photo="'+esc(m.photo_path)+'" alt="">':esc(initials(m.full_name));
+    return '<article class="person card"><div class="person-head"><div class="avatar">'+avatar+'</div><div><h3>'+esc(m.preferred_name||m.full_name)+'</h3><div class="where">'+esc(where||'Location not yet added')+'</div></div></div>'+
+      '<div class="chips">'+(m.profession?'<span class="chip">'+esc(m.profession)+'</span>':'')+(m.food_preference?'<span class="chip">'+esc(m.food_preference)+'</span>':'')+(m.drink_preference?'<span class="chip">'+esc(m.drink_preference)+'</span>':'')+'</div>'+
+      '<div class="actions">'+(m.email?'<a class="linkbtn" href="mailto:'+encodeURIComponent(m.email)+'">Email</a>':'')+(m.whatsapp_phone?'<a class="linkbtn" href="https://wa.me/'+normPhone(m.whatsapp_phone)+'" target="_blank" rel="noopener">WhatsApp</a>':'')+'</div></article>'
+  }).join('');
+  loadPhotos();
+}
+async function loadPhotos(){
+  document.querySelectorAll('[data-photo]').forEach(async img=>{
+    const {data,error}=await db.storage.from('reunion-photos').createSignedUrl(img.dataset.photo,900);
+    if(!error&&data?.signedUrl) img.src=data.signedUrl;
+  });
+}
+function renderProfile(){
+  if(!me)return;
+  $('profilePanel').innerHTML='<div class="card pad"><div class="photo-row"><div class="avatar" id="myAvatar">'+(me.photo_path?'<img id="myPhoto" alt="">':esc(initials(me.full_name)))+'</div><div class="photo-actions"><div><b style="color:var(--brown)">'+esc(me.full_name)+'</b><div style="font-size:10px;color:var(--muted)">'+esc(me.class_batch)+'</div></div><input id="photoFile" type="file" accept="image/*" class="input"><button class="btn small" id="uploadPhoto">Upload photo</button></div></div>'+
+  '<div id="profileMsg" class="notice hidden" style="margin-bottom:13px"></div>'+
+  '<div class="section"><h2>Contact & location</h2><div class="grid">'+
+  field('Full name','p_name',me.full_name,true)+'<div><label>Mobile</label><input class="input" id="p_phone" value="'+esc(me.phone||'')+'"><label class="same"><input type="checkbox" id="sameWhats" '+(normPhone(me.phone)===normPhone(me.whatsapp_phone)&&me.whatsapp_phone?'checked':'')+'> WhatsApp is the same as mobile</label></div>'+
+  field('WhatsApp number','p_whatsapp',me.whatsapp_phone||'','')+field('Email','p_email',me.email||'')+
+  field('Current city','p_city',me.current_city||'')+field('State / region','p_state',me.current_state||'')+field('Country','p_country',me.current_country||'')+
+  '</div></div>'+
+  '<div class="section"><h2>About you</h2><div class="grid">'+field('Profession','p_profession',me.profession||'')+field('Company / organisation','p_company',me.company||'')+field('Food preference','p_food',me.food_preference||'')+field('Drink preference','p_drink',me.drink_preference||'')+field('Hobbies / interests','p_hobbies',me.hobbies||'','full')+field('A little about me','p_about',me.about||'','full','textarea')+'</div></div>'+
+  '<div class="section"><h2>Private address</h2><div class="notice">Your detailed address is stored securely but is <b>not shown in the classmate directory</b>.</div><textarea class="input" id="p_address" style="margin-top:10px" placeholder="Full street address, city, postal code…">'+esc(privateProfile?.detailed_address||'')+'</textarea></div>'+
+  '<div class="top-actions"><button class="btn primary" id="saveProfile">Save changes</button><span style="font-size:10px;color:var(--muted)">Class / Batch: <b>COEP ENTC 1983</b></span></div></div>';
+  $('sameWhats').onchange=()=>{if($('sameWhats').checked)$('p_whatsapp').value=$('p_phone').value};
+  $('p_phone').oninput=()=>{if($('sameWhats').checked)$('p_whatsapp').value=$('p_phone').value};
+  $('saveProfile').onclick=saveProfile;
+  $('uploadPhoto').onclick=uploadPhoto;
+  if(me.photo_path) db.storage.from('reunion-photos').createSignedUrl(me.photo_path,900).then(({data})=>{if(data?.signedUrl&&$('myPhoto'))$('myPhoto').src=data.signedUrl});
+  db.from('reunion_private_profiles').select('*').eq('member_id',me.id).maybeSingle().then(({data})=>{privateProfile=data||{};$('p_address').value=privateProfile.detailed_address||''});
+}
+function field(label,id,value,disabled=false,cls='',kind='input'){
+  if(kind==='textarea')return '<div class="'+cls+'"><label>'+label+'</label><textarea class="input" id="'+id+'" '+(disabled?'disabled':'')+'>'+esc(value)+'</textarea></div>';
+  return '<div class="'+cls+'"><label>'+label+'</label><input class="input" id="'+id+'" value="'+esc(value)+'" '+(disabled?'disabled':'')+'></div>';
+}
+async function saveProfile(){
+  const msg=$('profileMsg');hide(msg);
+  const patch={full_name:$('p_name').value.trim(),phone:$('p_phone').value.trim(),whatsapp_phone:$('p_whatsapp').value.trim(),email:$('p_email').value.trim(),current_city:$('p_city').value.trim(),current_state:$('p_state').value.trim(),current_country:$('p_country').value.trim(),profession:$('p_profession').value.trim(),company:$('p_company').value.trim(),hobbies:$('p_hobbies').value.trim(),about:$('p_about').value.trim(),food_preference:$('p_food').value.trim(),drink_preference:$('p_drink').value.trim()};
+  const {error}=await db.from('reunion_members').update(patch).eq('id',me.id);
+  if(error){notice(msg,error.message,'error');return}
+  const {error:pe}=await db.from('reunion_private_profiles').update({detailed_address:$('p_address').value.trim()}).eq('member_id',me.id);
+  if(pe){notice(msg,pe.message,'error');return}
+  const {data}=await db.from('reunion_members').select('*').eq('id',me.id).single();me=data;
+  notice(msg,me.profile_completed?'Saved. Your profile is complete.':'Saved. A few essential fields are still missing.','success');
+  await loadDirectory();
+  renderProfile();
+}
+async function uploadPhoto(){
+  const f=$('photoFile').files[0]; if(!f)return alert('Choose a photo first.');
+  if(f.size>5*1024*1024)return alert('Please keep the photo under 5 MB.');
+  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();const path=session.id+'/'+Date.now()+'.'+ext;
+  const {error}=await db.storage.from('reunion-photos').upload(path,f,{upsert:false,contentType:f.type});
+  if(error)return alert(error.message);
+  const {error:ue}=await db.from('reunion_members').update({photo_path:path}).eq('id',me.id);
+  if(ue)return alert(ue.message);
+  me.photo_path=path;renderProfile();await loadDirectory();
+}
+async function submitClaim(){
+  const name=$('claimName').value.trim(), phone=$('claimPhone').value.trim();
+  const msg=$('claimMsg');hide(msg);
+  if(!name||!phone){notice(msg,'Please enter both your full name and mobile number.','error');return}
+  const {error}=await db.rpc('reunion_claim_by_name_phone',{p_name:name,p_phone:phone});
+  if(error){
+    const {error:ie}=await db.from('reunion_pending_claims').insert({auth_user_id:session.id,email:session.email,claimed_name:name,claimed_phone:phone});
+    if(ie)notice(msg,error.message,'error');else notice(msg,'Your request has been sent to the admin for matching. You can return here later.','');
+    return;
+  }
+  await loadMe();
+}
+async function renderAdmin(){
+  if(role!=='admin')return;
+  const {data:all}=await db.from('reunion_members').select('*').order('full_name');
+  const {data:roles}=await db.from('reunion_roles').select('*');
+  const {data:claims}=await db.from('reunion_pending_claims').select('*').eq('status','pending').order('created_at');
+  const roleMap=Object.fromEntries((roles||[]).map(x=>[x.member_id,x.role]));
+  const total=(all||[]).filter(m=>!m.is_test_record).length, done=(all||[]).filter(m=>!m.is_test_record&&m.profile_completed).length;
+  $('adminPanel').innerHTML='<div class="hero"><div class="eyebrow">Administration</div><h1>Class Reunion Admin</h1><p>Manage classmates, completion, roles and matching requests.</p></div>'+
+  '<div class="grid"><div class="card pad"><div class="eyebrow">Progress</div><div style="font:600 31px Playfair Display;color:var(--brown);margin-top:4px">'+done+' / '+total+'</div><div style="font-size:11px;color:var(--muted)">real classmates complete</div></div><div class="card pad"><div class="eyebrow">Total records</div><div style="font:600 31px Playfair Display;color:var(--brown);margin-top:4px">'+(all||[]).length+'</div><div style="font-size:11px;color:var(--muted)">including test records</div></div></div>'+
+  '<div class="card pad" style="margin-top:14px"><h2 class="form-title">Import class list</h2><p class="form-sub">Excel/CSV import is ready. It will add records as supplied; it will not guess or correct names.</p><input class="input" id="importFile" type="file" accept=".xlsx,.xls,.csv"><div class="top-actions" style="margin-top:10px"><button class="btn primary" id="importBtn">Import preview</button><span id="importMsg" style="font-size:11px;color:var(--muted)"></span></div></div>'+
+  '<div class="card pad" style="margin-top:14px"><h2 class="form-title">Pending matching requests</h2><div class="pending">'+((claims||[]).length?claims.map(c=>'<div class="claim"><strong>'+esc(c.claimed_name)+'</strong><small>'+esc(c.claimed_phone)+' · '+esc(c.email||'')+'</small><div style="display:flex;gap:7px;flex-wrap:wrap"><select class="input claimMember" data-claim="'+c.id+'"><option value="">Select classmate to link…</option>'+((all||[]).filter(m=>!m.auth_user_id).map(m=>'<option value="'+m.id+'">'+esc(m.full_name)+(m.phone?' · '+esc(m.phone):'')+'</option>').join(''))+'</select><button class="btn small primary linkClaim" data-claim="'+c.id+'">Link</button></div></div>').join(''):'<div class="empty">No pending requests.</div>')+'</div></div>'+
+  '<div class="card pad" style="margin-top:14px"><div class="top-actions"><h2 class="form-title" style="margin-right:auto">Classmates</h2><button class="btn small" id="addMemberBtn">Add classmate</button></div><div style="overflow:auto"><table class="admin-table"><thead><tr><th>Name</th><th>Phone</th><th>Location</th><th>Profile</th><th>Role</th><th></th></tr></thead><tbody>'+((all||[]).map(m=>'<tr><td><b>'+esc(m.full_name)+'</b>'+(m.is_test_record?' <span class="chip">TEST</span>':'')+'</td><td>'+esc(m.phone||'')+'</td><td>'+esc([m.current_city,m.current_country].filter(Boolean).join(', '))+'</td><td>'+(m.profile_completed?'Complete':'Incomplete')+'</td><td><select class="roleSelect" data-id="'+m.id+'"><option value="user" '+(roleMap[m.id]!=='admin'?'selected':'')+'>User</option><option value="admin" '+(roleMap[m.id]==='admin'?'selected':'')+'>Admin</option></select></td><td><button class="btn small editMember" data-id="'+m.id+'">Edit</button></td></tr>').join(''))+'</tbody></table></div></div>';
+  document.querySelectorAll('.roleSelect').forEach(s=>s.onchange=async()=>{const {error}=await db.from('reunion_roles').upsert({member_id:Number(s.dataset.id),role:s.value});if(error)alert(error.message);else await renderAdmin()});
+  document.querySelectorAll('.editMember').forEach(b=>b.onclick=()=>openMemberEditor(Number(b.dataset.id)));
+  document.querySelectorAll('.linkClaim').forEach(b=>b.onclick=()=>linkClaim(Number(b.dataset.claim)));
+  $('addMemberBtn').onclick=()=>openMemberEditor(null);
+  $('importBtn').onclick=importWorkbook;
+}
+function openMemberEditor(id){
+  adminEditingId=id;
+  const m=id?members.find(x=>x.id===id):{full_name:'',preferred_name:'',phone:'',whatsapp_phone:'',email:'',current_city:'',current_state:'',current_country:'',profession:'',company:'',hobbies:'',about:'',food_preference:'',drink_preference:''};
+  $('modalBody').innerHTML='<h2 class="form-title">'+(id?'Edit classmate':'Add classmate')+'</h2><div class="grid" style="margin-top:14px">'+field('Full name','a_name',m.full_name)+field('Preferred name','a_pref',m.preferred_name||'')+field('Mobile','a_phone',m.phone||'')+field('WhatsApp','a_whatsapp',m.whatsapp_phone||'')+field('Email','a_email',m.email||'')+field('Current city','a_city',m.current_city||'')+field('State / region','a_state',m.current_state||'')+field('Country','a_country',m.current_country||'')+field('Profession','a_profession',m.profession||'')+field('Company','a_company',m.company||'')+field('Food preference','a_food',m.food_preference||'')+field('Drink preference','a_drink',m.drink_preference||'')+field('Hobbies / interests','a_hobbies',m.hobbies||'','full')+field('About','a_about',m.about||'','full','textarea')+'</div><div class="top-actions" style="margin-top:14px"><button class="btn primary" id="saveAdminMember">Save</button><button class="btn" id="cancelAdminMember">Cancel</button></div>';
+  show($('modal'));$('modalClose').onclick=()=>hide($('modal'));$('cancelAdminMember').onclick=()=>hide($('modal'));$('saveAdminMember').onclick=saveAdminMember;
+}
+async function saveAdminMember(){
+  const patch={full_name:$('a_name').value.trim(),preferred_name:$('a_pref').value.trim(),phone:$('a_phone').value.trim(),whatsapp_phone:$('a_whatsapp').value.trim(),email:$('a_email').value.trim(),current_city:$('a_city').value.trim(),current_state:$('a_state').value.trim(),current_country:$('a_country').value.trim(),profession:$('a_profession').value.trim(),company:$('a_company').value.trim(),hobbies:$('a_hobbies').value.trim(),about:$('a_about').value.trim(),food_preference:$('a_food').value.trim(),drink_preference:$('a_drink').value.trim(),class_batch:'COEP ENTC 1983'};
+  let res;
+  if(adminEditingId)res=await db.from('reunion_members').update(patch).eq('id',adminEditingId);
+  else res=await db.from('reunion_members').insert(patch).select().single();
+  if(res.error)return alert(res.error.message);
+  const id=adminEditingId||res.data.id;
+  if(!adminEditingId)await db.from('reunion_private_profiles').insert({member_id:id});
+  hide($('modal'));await loadDirectory();await renderAdmin();
+}
+async function linkClaim(claimId){
+  const sel=document.querySelector('.claimMember[data-claim="'+claimId+'"]');const memberId=Number(sel.value);if(!memberId)return alert('Select a classmate first.');
+  const {data:claim}=await db.from('reunion_pending_claims').select('*').eq('id',claimId).single();
+  const {error}=await db.from('reunion_members').update({auth_user_id:claim.auth_user_id,email:claim.email}).eq('id',memberId);
+  if(error)return alert(error.message);
+  const {error:ce}=await db.from('reunion_pending_claims').update({status:'approved',matched_member_id:memberId}).eq('id',claimId);
+  if(ce)return alert(ce.message);
+  await loadDirectory();await renderAdmin();
+}
+async function importWorkbook(){
+  const f=$('importFile').files[0];if(!f)return alert('Choose the Excel file first.');
+  const msg=$('importMsg');msg.textContent='Reading…';
+  const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+  if(!rows.length){msg.textContent='No rows found.';return}
+  let added=0,skipped=0;
+  for(const r of rows){
+    const name=String(r['Name']||r['Full Name']||r['full_name']||r['name']||'').trim();
+    const phone=String(r['Phone']||r['Mobile']||r['phone']||r['mobile']||'').trim();
+    if(!name){skipped++;continue}
+    const payload={full_name:name,phone:phone||null,whatsapp_phone:phone||null,class_batch:'COEP ENTC 1983'};
+    const {error}=await db.from('reunion_members').insert(payload);
+    if(error)skipped++;else{added++;const {data:mx}=await db.from('reunion_members').select('id').eq('full_name',name).order('id',{ascending:false}).limit(1).single();if(mx)await db.from('reunion_private_profiles').insert({member_id:mx.id})}
+  }
+  msg.textContent='Imported '+added+' records; skipped '+skipped+'. Review the list before sending the link.';
+  await loadDirectory();await renderAdmin();
+}
+$('sendLink').onclick=async()=>{
+  const email=$('loginEmail').value.trim();if(!email)return notice($('loginMsg'),'Please enter your email address.','error');
+  $('sendLink').disabled=true;
+  const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:REDIRECT,shouldCreateUser:true}});
+  $('sendLink').disabled=false;
+  if(error)notice($('loginMsg'),error.message,'error');else notice($('loginMsg'),'Sign-in link sent. Check your email and tap the link on this phone.','success');
+};
+$('claimBtn').onclick=submitClaim;
+$('claimSignout').onclick=async()=>{await db.auth.signOut();setLoggedOut()};
+$('navDirectory').onclick=()=>switchNav('directory');
+$('navProfile').onclick=()=>switchNav('profile');
+$('navAdmin').onclick=()=>switchNav('admin');
+$('navSignout').onclick=async()=>{await db.auth.signOut();setLoggedOut()};
+$('search').oninput=renderDirectory;$('clearSearch').onclick=()=>{$('search').value='';renderDirectory()};
+$('modalClose').onclick=()=>hide($('modal'));
+db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='INITIAL_SESSION')setTimeout(loadMe,0);if(event==='SIGNED_OUT')setLoggedOut()});
+loadMe();
+</script>
+</body>
+</html>
