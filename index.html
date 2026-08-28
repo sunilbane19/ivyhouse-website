@@ -1913,12 +1913,12 @@ function toggleMobileMenu(){
     const params = new URLSearchParams(window.location.search);
     const checkin = params.get('checkin');
     const checkout = params.get('checkout');
-    if (checkin && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkin)) {
+    if (checkin && /^\d{4}-\d{2}-\d{2}$/.test(checkin)) {
       form.checkin.value = checkin;
     }
-    if (checkout && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkout)) {
+    if (checkout && /^\d{4}-\d{2}-\d{2}$/.test(checkout)) {
       form.checkout.value = checkout;
-    } else if (checkin && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkin)) {
+    } else if (checkin && /^\d{4}-\d{2}-\d{2}$/.test(checkin)) {
       form.checkout.value = checkin;
     }
     updateEnquiryWhatsAppLink();
