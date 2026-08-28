@@ -102,7 +102,29 @@ const escHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>
 const publicUrl=path=>db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 function setLoginMessage(t){document.getElementById('loginmsg').textContent=t||''}
 
+async function handleOAuthCallback(){
+ try{
+  const hash=window.location.hash.startsWith('#')?window.location.hash.slice(1):'';
+  const params=new URLSearchParams(hash);
+  const access_token=params.get('access_token');
+  const refresh_token=params.get('refresh_token');
+  const code=new URLSearchParams(window.location.search).get('code');
+  if(access_token&&refresh_token){
+   const {error}=await db.auth.setSession({access_token,refresh_token});
+   if(error) throw error;
+   window.history.replaceState({},document.title,window.location.pathname);
+  }else if(code){
+   const {error}=await db.auth.exchangeCodeForSession(code);
+   if(error) throw error;
+   window.history.replaceState({},document.title,window.location.pathname);
+  }
+ }catch(e){
+  setLoginMessage('Google sign-in could not be completed. Please try again.');
+  console.error('OAuth callback error:',e);
+ }
+}
 async function init(){
+ await handleOAuthCallback();
  const {data:{session},error}=await db.auth.getSession();
  if(error){setLoginMessage(error.message);return}
  if(session?.user?.email===ADMIN){show('login',false);show('app',true);loadAvailability();loadGallery()}
