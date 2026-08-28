@@ -107,12 +107,23 @@ function setLoginMessage(t){document.getElementById('loginmsg').textContent=t||'
 
 async function handleOAuthCallback(){
  try{
-  // supabase-js is configured with detectSessionInUrl, so let it consume
-  // the OAuth hash itself. This also handles browsers where the callback
-  // hash does not contain a refresh token immediately.
-  await new Promise(resolve=>setTimeout(resolve,250));
+  // Supabase may return the implicit-flow tokens in either the URL hash or
+  // query string depending on the hosting/browser. Explicitly consume them
+  // so the admin page does not get stuck on the login screen.
+  const params=new URLSearchParams(window.location.search);
+  const hash=new URLSearchParams(window.location.hash.replace(/^#/,''));
+  const access_token=params.get('access_token')||hash.get('access_token');
+  const refresh_token=params.get('refresh_token')||hash.get('refresh_token');
+  if(access_token && refresh_token){
+   const {error}=await db.auth.setSession({access_token,refresh_token});
+   if(error) throw error;
+   window.history.replaceState({},document.title,window.location.pathname);
+   return;
+  }
+  await new Promise(resolve=>setTimeout(resolve,300));
  }catch(e){
   console.error('OAuth callback error:',e);
+  setLoginMessage('Google sign-in could not be completed. Please try again.');
  }
 }
 async function init(){
