@@ -52,14 +52,14 @@ main{max-width:1100px;margin:auto;padding:22px 16px 70px}.hero{padding:16px 4px 
 </section>
 
 <section id="claimView" class="hidden">
-  <div class="hero"><div class="eyebrow">One-time setup</div><h1>Find your class record</h1><p>Your email is verified. Match yourself to the pre-loaded class list.</p></div>
+  <div class="hero"><div class="eyebrow">One-time setup</div><h1>Find your class record</h1><p>Your email is verified. Tell us which pre-loaded class record is yours.</p></div>
   <div class="card pad" style="max-width:620px;margin:auto">
-    <div class="notice">For V1, use the <b>full name and mobile number exactly as they appear in the class list</b>. Later we'll add WhatsApp OTP for stronger automatic verification.</div>
+    <div class="notice">For V1, enter the <b>full name and mobile number exactly as they appear in the class list</b>. The admin will match your request to the class list. Later we'll add WhatsApp OTP for automatic verification.</div>
     <div class="grid" style="margin-top:16px">
       <div><label>Full name</label><input class="input" id="claimName" placeholder="Full name"></div>
       <div><label>Mobile number</label><input class="input" id="claimPhone" placeholder="+91 ..."></div>
     </div>
-    <div class="top-actions" style="margin-top:14px"><button class="btn primary" id="claimBtn">Match my record</button><button class="btn" id="claimSignout">Sign out</button></div>
+    <div class="top-actions" style="margin-top:14px"><button class="btn primary" id="claimBtn">Submit matching request</button><button class="btn" id="claimSignout">Sign out</button></div>
     <div id="claimMsg" class="notice hidden"></div>
   </div>
 </section>
@@ -206,13 +206,8 @@ async function submitClaim(){
   const name=$('claimName').value.trim(), phone=$('claimPhone').value.trim();
   const msg=$('claimMsg');hide(msg);
   if(!name||!phone){notice(msg,'Please enter both your full name and mobile number.','error');return}
-  const {error}=await db.rpc('reunion_claim_by_name_phone',{p_name:name,p_phone:phone});
-  if(error){
-    const {error:ie}=await db.from('reunion_pending_claims').insert({auth_user_id:session.id,email:session.email,claimed_name:name,claimed_phone:phone});
-    if(ie)notice(msg,error.message,'error');else notice(msg,'Your request has been sent to the admin for matching. You can return here later.','');
-    return;
-  }
-  await loadMe();
+  const {error}=await db.from('reunion_pending_claims').insert({auth_user_id:session.id,email:session.email,claimed_name:name,claimed_phone:phone});
+  if(error)notice(msg,error.message,'error');else notice(msg,'Your matching request has been sent to the admin. Once approved, this account will open the reunion directory.','success');
 }
 async function renderAdmin(){
   if(role!=='admin')return;
