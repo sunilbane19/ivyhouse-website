@@ -81,7 +81,8 @@ const KEY='sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu';
 const ADMIN='sunilbane19@gmail.com';
 const REDIRECT=window.location.origin+window.location.pathname;
 const BUCKET='ivy-house-gallery';
-if(!window.supabase){document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';throw new Error('Supabase authentication library failed to load');}\nconst db=window.supabase.createClient(SUPABASE_URL,KEY);
+if(!window.supabase){document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';throw new Error('Supabase authentication library failed to load');}
+const db=window.supabase.createClient(SUPABASE_URL,KEY);
 let view=new Date(); view.setDate(1); let blocks=[],selectedId=null;
 let categories=[],items=[],links=[],selectedCategory='all';
 
