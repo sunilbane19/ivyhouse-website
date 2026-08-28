@@ -157,12 +157,12 @@ function renderCategories(){
  const rows=[{id:null,name:'All media',slug:'all'},...categories];
  list.innerHTML=rows.map((c,idx)=>`<div class="cat-row ${selectedCategory===c.slug?'active':''}">
  <button class="icon-btn cat-name" data-cat="${escHtml(c.slug)}" style="text-align:left">${escHtml(c.name)}</button>
- ${c.id?'<button class="icon-btn" title="Move up" data-up="'+c.id+'">↑</button><button class="icon-btn" title="Move down" data-down="'+c.id+'">↓</button><button class="icon-btn" title="Rename" data-edit="'+c.id+'">✎</button>':''}
+ ${c.id?'<button class="icon-btn" title="Move up" data-up="'+c.id+'">↑</button><button class="icon-btn" title="Move down" data-down="'+c.id+'">↓</button><button class="icon-btn" title="Rename" data-edit="'+c.id+'">✎</button><button class="icon-btn" title="Delete" data-delcat="'+c.id+'">×</button>':''}
  </div>`).join('');
  list.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{selectedCategory=b.dataset.cat;renderCategories();renderItems()});
  list.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>moveCategory(Number(b.dataset.up),-1));
  list.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>moveCategory(Number(b.dataset.down),1));
- list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>renameCategory(Number(b.dataset.edit)));
+ list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>renameCategory(Number(b.dataset.edit)));\n list.querySelectorAll('[data-delcat]').forEach(b=>b.onclick=()=>deleteCategory(Number(b.dataset.delcat)));
 }
 async function moveCategory(id,dir){
  const ix=categories.findIndex(x=>x.id===id),to=ix+dir;if(ix<0||to<0||to>=categories.length)return;
@@ -170,6 +170,14 @@ async function moveCategory(id,dir){
  await db.from('gallery_categories').update({sort_order:b.sort_order}).eq('id',a.id);
  await db.from('gallery_categories').update({sort_order:a.sort_order}).eq('id',b.id);
  await loadGallery();
+}
+async function deleteCategory(id){
+ const c=categories.find(x=>x.id===id); if(!c)return;
+ const used=links.some(x=>x.category_id===id);
+ if(used){alert('This section still contains media. Remove the media from this section first.');return}
+ if(!confirm('Delete the “'+c.name+'” section?'))return;
+ const {error}=await db.from('gallery_categories').delete().eq('id',id);
+ if(error)alert(error.message);else{selectedCategory='all';loadGallery()}
 }
 async function renameCategory(id){
  const c=categories.find(x=>x.id===id);if(!c)return;const name=prompt('Section name',c.name);if(!name||!name.trim())return;
