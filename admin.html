@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--forest:#2d4a2d;--deep:#1e3320;--sage:#7a9e7e;--moss:#4a6741;--cream:#f5f0e8;--white:#faf8f3;--sand:#e8e0d0;--amber:#c68b3a;--text:#34322d;--muted:#5f625d;--line:#d8d0c3;--danger:#9b3f35}
 *{box-sizing:border-box}html,body{margin:0;background:var(--white);color:var(--text);font-family:'DM Sans',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
@@ -26,7 +26,7 @@
 <section id="login" class="login card">
 <div class="eyebrow">Private admin</div><h2>Ivy House Admin</h2>
 <p>Sign in with your Google account to manage availability and the website gallery.</p>
-<button class="btn primary" id="google">Sign in with Google</button><div class="msg" id="loginmsg"></div>
+<a class="btn primary" id="google" href="https://yiwmtfbqbynimqvwxosu.supabase.co/auth/v1/authorize?provider=google&amp;redirect_to=https%3A%2F%2Fivyhouse.in%2Fadmin.html">Sign in with Google</a><div class="msg" id="loginmsg"></div>
 </section>
 
 <section id="app" class="hidden">
@@ -84,6 +84,7 @@ const BUCKET='ivy-house-gallery';
 if(!window.supabase){document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';throw new Error('Supabase authentication library failed to load');}
 const db=window.supabase.createClient(SUPABASE_URL,KEY);
 const loginmsg=document.getElementById('loginmsg'), google=document.getElementById('google'), logout=document.getElementById('logout');
+google.setAttribute('href','https://yiwmtfbqbynimqvwxosu.supabase.co/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(REDIRECT));
 const navAvailability=document.getElementById('navAvailability'), navGallery=document.getElementById('navGallery');
 const availabilityView=document.getElementById('availabilityView'), galleryView=document.getElementById('galleryView');
 const prev=document.getElementById('prev'), next=document.getElementById('next'), save=document.getElementById('save'), remove=document.getElementById('remove');
@@ -107,11 +108,7 @@ async function init(){
  if(session?.user?.email===ADMIN){show('login',false);show('app',true);loadAvailability();loadGallery()}
  else {show('app',false);show('login',true)}
 }
-document.getElementById('google').onclick=async()=>{
- const b=document.getElementById('google');b.disabled=true;setLoginMessage('Opening Google…');
- const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:REDIRECT,queryParams:{prompt:'select_account'}}});
- if(error){setLoginMessage(error.message);b.disabled=false}
-};
+document.getElementById('google').onclick=()=>{setLoginMessage('Opening Google…')};
 document.getElementById('logout').onclick=async()=>{await db.auth.signOut({scope:'local'});location.href=REDIRECT};
 db.auth.onAuthStateChange((event,session)=>{if(session?.user?.email===ADMIN){show('login',false);show('app',true);if(event==='SIGNED_IN'){loadAvailability();loadGallery()}}else if(event==='SIGNED_OUT'||!session){show('app',false);show('login',true)}});
 
