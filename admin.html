@@ -162,7 +162,8 @@ function renderCategories(){
  list.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{selectedCategory=b.dataset.cat;renderCategories();renderItems()});
  list.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>moveCategory(Number(b.dataset.up),-1));
  list.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>moveCategory(Number(b.dataset.down),1));
- list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>renameCategory(Number(b.dataset.edit)));\n list.querySelectorAll('[data-delcat]').forEach(b=>b.onclick=()=>deleteCategory(Number(b.dataset.delcat)));
+ list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>renameCategory(Number(b.dataset.edit)));
+ list.querySelectorAll('[data-delcat]').forEach(b=>b.onclick=()=>deleteCategory(Number(b.dataset.delcat)));
 }
 async function moveCategory(id,dir){
  const ix=categories.findIndex(x=>x.id===id),to=ix+dir;if(ix<0||to<0||to>=categories.length)return;
