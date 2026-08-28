@@ -1905,6 +1905,25 @@ function toggleMobileMenu(){
     window.location.href = "mailto:contact@ivyhouse.in?subject=" + subject + "&body=" + body;
   }
 
+  // Prefill enquiry dates when arriving from the Availability calendar.
+  // The calendar passes ?checkin=YYYY-MM-DD&checkout=YYYY-MM-DD in the URL.
+  function prefillEnquiryDatesFromUrl() {
+    const form = document.getElementById('availability-form');
+    if (!form) return;
+    const params = new URLSearchParams(window.location.search);
+    const checkin = params.get('checkin');
+    const checkout = params.get('checkout');
+    if (checkin && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkin)) {
+      form.checkin.value = checkin;
+    }
+    if (checkout && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkout)) {
+      form.checkout.value = checkout;
+    } else if (checkin && /^\\d{4}-\\d{2}-\\d{2}$/.test(checkin)) {
+      form.checkout.value = checkin;
+    }
+    updateEnquiryWhatsAppLink();
+  }
+
   const availabilityForm = document.getElementById('availability-form');
   if (availabilityForm) {
     ['input', 'change'].forEach(evt => {
