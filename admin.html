@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
 :root{--forest:#2d4a2d;--deep:#1e3320;--sage:#7a9e7e;--moss:#4a6741;--cream:#f5f0e8;--white:#faf8f3;--sand:#e8e0d0;--amber:#c68b3a;--text:#34322d;--muted:#5f625d;--line:#d8d0c3;--danger:#9b3f35}
 *{box-sizing:border-box}html,body{margin:0;background:var(--white);color:var(--text);font-family:'DM Sans',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
@@ -83,6 +83,14 @@ const REDIRECT=window.location.origin+window.location.pathname;
 const BUCKET='ivy-house-gallery';
 if(!window.supabase){document.getElementById('loginmsg').textContent='Admin sign-in could not load its authentication service. Please refresh the page.';throw new Error('Supabase authentication library failed to load');}
 const db=window.supabase.createClient(SUPABASE_URL,KEY);
+const loginmsg=document.getElementById('loginmsg'), google=document.getElementById('google'), logout=document.getElementById('logout');
+const navAvailability=document.getElementById('navAvailability'), navGallery=document.getElementById('navGallery');
+const availabilityView=document.getElementById('availabilityView'), galleryView=document.getElementById('galleryView');
+const prev=document.getElementById('prev'), next=document.getElementById('next'), save=document.getElementById('save'), remove=document.getElementById('remove');
+const from=document.getElementById('from'), to=document.getElementById('to'), note=document.getElementById('note'), status=document.getElementById('status'), calmsg=document.getElementById('calmsg'), result=document.getElementById('result'), month=document.getElementById('month'), grid=document.getElementById('grid');
+const uploadCategories=document.getElementById('uploadCategories'), newCategory=document.getElementById('newCategory'), addCategory=document.getElementById('addCategory');
+const mediaGrid=document.getElementById('mediaGrid'), galleryCount=document.getElementById('galleryCount'), upload=document.getElementById('upload'), files=document.getElementById('files'), uploadStatus=document.getElementById('uploadStatus'), uploadCaption=document.getElementById('uploadCaption');
+const refreshGallery=document.getElementById('refreshGallery'), migrate=document.getElementById('migrate'), migrationStatus=document.getElementById('migrationStatus');
 let view=new Date(); view.setDate(1); let blocks=[],selectedId=null;
 let categories=[],items=[],links=[],selectedCategory='all';
 
