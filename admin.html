@@ -260,35 +260,40 @@ function renderItems(){
  const pool=selectedCategory==='all'?items:items.filter(i=>itemCats(i.id).includes(categories.find(c=>c.slug===selectedCategory)?.id));
  document.getElementById('galleryCount').textContent=pool.length+' media item'+(pool.length===1?'':'s');
  if(!pool.length){mediaGrid.innerHTML='<div class="empty" style="grid-column:1/-1">No media in this section yet.</div>';return}
- mediaGrid.innerHTML=pool.map((it,idx)=>{
+ mediaGrid.innerHTML=pool.map(it=>{
   const src=it.storage_path?publicUrl(it.storage_path):('https://raw.githubusercontent.com/sunilbane19/ivyhouse-website/main/'+it.source_path);
   const cats=itemCats(it.id);
-  return `<article class="media-card card">
-   <div class="thumb">${it.media_type==='video'?'<video src="'+src+'" controls muted preload="metadata"></video>':'<img src="'+src+'" alt="'+escHtml(it.alt_text||it.caption||'Ivy House')+'">'}</div>
-   <div class="media-body">
-    <input class="input caption" data-id="${it.id}" value="${escHtml(it.caption||'')}" placeholder="Caption">
-    <details class="section-picker">
-      <summary>Sections <span class="section-summary-text">${cats.map(id=>categories.find(c=>c.id===id)?.name).filter(Boolean).map(escHtml).join(' · ')||'None selected'}</span></summary>
-      <div class="section-menu">${categories.map(c=>`<label class="check"><input type="checkbox" data-item="${it.id}" data-category="${c.id}" ${cats.includes(c.id)?'checked':''}> ${escHtml(c.name)}</label>`).join('')}</div>
-    </details>
-    <div class="media-actions">
-      <button class="btn small" data-save-item="${it.id}">Save</button>
-      <button class="btn small" data-up-item="${it.id}">↑</button><button class="btn small" data-down-item="${it.id}">↓</button>
-      <button class="btn small danger" data-delete-item="${it.id}">Delete</button>
-    </div>
-   </div>
-  </article>`;
+  const media=it.media_type==='video'
+   ? '<video src="'+escHtml(src)+'" controls muted preload="metadata"></video>'
+   : '<img src="'+escHtml(src)+'" alt="'+escHtml(it.alt_text||it.caption||'Ivy House')+'">';
+  const sectionNames=cats.map(id=>categories.find(c=>c.id===id)?.name).filter(Boolean).map(escHtml).join(' · ')||'None selected';
+  const sectionChecks=categories.map(c=>{
+   const checked=cats.includes(c.id)?' checked':'';
+   return '<label class="check"><input type="checkbox" data-item="'+it.id+'" data-category="'+c.id+'"'+checked+'> '+escHtml(c.name)+'</label>';
+  }).join('');
+  return '<article class="media-card card">'+
+   '<div class="thumb">'+media+'</div>'+
+   '<div class="media-body">'+
+   '<input class="input caption" data-id="'+it.id+'" value="'+escHtml(it.caption||'')+'" placeholder="Caption">'+
+   '<details class="section-picker"><summary>Sections <span class="section-summary-text">'+sectionNames+'</span></summary>'+
+   '<div class="section-menu">'+sectionChecks+'</div></details>'+
+   '<div class="media-actions">'+
+   '<button class="btn small" data-save-item="'+it.id+'">Save</button>'+
+   '<button class="btn small" data-up-item="'+it.id+'">↑</button>'+
+   '<button class="btn small" data-down-item="'+it.id+'">↓</button>'+
+   '<button class="btn small danger" data-delete-item="'+it.id+'">Delete</button>'+
+   '</div></div></article>';
  }).join('');
  document.querySelectorAll('[data-save-item]').forEach(b=>b.onclick=()=>saveItem(Number(b.dataset.saveItem)));
  document.querySelectorAll('[data-up-item]').forEach(b=>b.onclick=()=>moveItem(Number(b.dataset.upItem),-1));
  document.querySelectorAll('[data-down-item]').forEach(b=>b.onclick=()=>moveItem(Number(b.dataset.downItem),1));
  document.querySelectorAll('[data-delete-item]').forEach(b=>b.onclick=()=>deleteItem(Number(b.dataset.deleteItem)));
-document.querySelectorAll('.section-picker input[data-item]').forEach(cb=>cb.onchange=()=>{
- const picker=cb.closest('.section-picker');
- const names=[...picker.querySelectorAll('input[data-category]:checked')].map(x=>categories.find(c=>c.id===Number(x.dataset.category))?.name).filter(Boolean);
- const label=picker.querySelector('.section-summary-text');
- label.textContent=names.length?names.join(' · '):'None selected';
-};
+ document.querySelectorAll('.section-picker input[data-item]').forEach(cb=>cb.onchange=()=>{
+  const picker=cb.closest('.section-picker');
+  const names=[...picker.querySelectorAll('input[data-category]:checked')].map(x=>categories.find(c=>c.id===Number(x.dataset.category))?.name).filter(Boolean);
+  const label=picker.querySelector('.section-summary-text');
+  label.textContent=names.length?names.join(' · '):'None selected';
+ });
 }
 async function saveItem(id){
  const it=items.find(x=>x.id===id);if(!it)return;
