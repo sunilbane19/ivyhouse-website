@@ -12,3 +12,109 @@
     white-space: normal;
   }
 }
+
+
+/* ── MOBILE GALLERY UX ──
+   Keep the gallery compact and make category controls easy to use with a thumb.
+*/
+@media (max-width: 768px) {
+  #page-gallery .page-hero {
+    height: 30vh !important;
+    min-height: 230px;
+    max-height: 300px;
+  }
+
+  #page-gallery > section {
+    padding: 34px 0 48px !important;
+  }
+
+  #page-gallery > section .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #page-gallery > section .reveal:first-child {
+    margin-bottom: 24px !important;
+  }
+
+  #page-gallery > section .reveal:first-child h2 {
+    font-size: 1.85rem !important;
+    line-height: 1.15;
+  }
+
+  /* One simple, swipeable row rather than several wrapped rows. */
+  #page-gallery .gallery-filters {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    margin: 0 -16px 28px;
+    padding: 8px 16px 12px;
+    position: sticky;
+    top: 64px;
+    z-index: 20;
+    background: var(--warm-white);
+  }
+
+  #page-gallery .gallery-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  #page-gallery .gallery-filter-btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 17px;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  #page-gallery .gallery-category-section {
+    margin-bottom: 42px;
+  }
+
+  #page-gallery .gallery-category-title {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+    padding-bottom: 9px;
+  }
+
+  #page-gallery .gallery-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #page-gallery .gallery-card {
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  }
+
+  #page-gallery .gallery-card:hover {
+    transform: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  }
+
+  #page-gallery .gallery-card:hover .gallery-card-media {
+    transform: none;
+  }
+
+  #page-gallery .gallery-lightbox {
+    padding: 12px;
+  }
+
+  #page-gallery .gallery-lightbox-content {
+    max-width: 94vw;
+    max-height: 82vh;
+  }
+
+  #page-gallery .gallery-lightbox-close {
+    top: 12px;
+    right: 12px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+  }
+}
