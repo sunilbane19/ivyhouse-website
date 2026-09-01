@@ -130,13 +130,18 @@ async function handleOAuthCallback(){
   setLoginMessage('Google sign-in could not be completed. Please try again.');
  }
 }
+async function isIvyHouseAdmin(){
+ const {data,error}=await db.rpc('is_ivy_house_admin');
+ if(error){console.error('Admin authorization check failed:',error);return false}
+ return data===true;
+}
 async function init(){
  await handleOAuthCallback();
  const {data:{session},error}=await db.auth.getSession();
  if(error){setLoginMessage(error.message);return}
  if(session){
   const email=(session.user?.email||'').trim().toLowerCase();
-  if(email===ADMIN){
+  if(email && await isIvyHouseAdmin()){
    window.history.replaceState({},document.title,window.location.pathname);
    show('login',false);show('app',true);loadAvailability();loadGallery();
    return;
@@ -157,8 +162,8 @@ if(document.getElementById('google')) document.getElementById('google').onclick=
  else if(data?.url){window.location.assign(data.url)}
 };
 document.getElementById('logout').onclick=async()=>{await db.auth.signOut({scope:'local'});location.href=REDIRECT};
-db.auth.onAuthStateChange((event,session)=>{
- if(session?.user?.email?.trim().toLowerCase()===ADMIN){
+db.auth.onAuthStateChange(async (event,session)=>{
+ if(session?.user?.email && await isIvyHouseAdmin()){
   show('login',false);show('app',true);
   if(event==='SIGNED_IN') {loadAvailability();loadGallery()}
  }else if(event==='SIGNED_OUT'){
