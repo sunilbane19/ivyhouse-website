@@ -78,6 +78,11 @@
     },
     {
       "@type": "SiteNavigationElement",
+      "name": "Reviews",
+      "url": "https://ivyhouse.in/#google-reviews"
+    },
+    {
+      "@type": "SiteNavigationElement",
       "name": "About",
       "url": "https://ivyhouse.in/#about"
     },
@@ -119,6 +124,7 @@
     <li><a href="availability.html">Availability</a></li>
     <li><a href="#lunch" data-page-link="lunch" class="coming-soon">Lazy Lunches</a></li>
     <li><a href="#gallery" data-page-link="gallery">Gallery</a></li>
+    <li><a href="#google-reviews" data-page-link="google-reviews">Reviews</a></li>
     <li><a href="#about" data-page-link="about">About</a></li>
   </ul>
   <button class="nav-enquire" onclick="handleEnquire()">Enquire</button>
@@ -133,6 +139,7 @@
   <a href="availability.html">Availability</a>
   <a href="#lunch" data-page-link="lunch">Lazy Lunches</a>
   <a href="#gallery" data-page-link="gallery">Gallery</a>
+  <a href="#google-reviews" data-page-link="google-reviews">Reviews</a>
   <a href="#about" data-page-link="about">About</a>
 </div>
 <!-- ════════════════════════════════
@@ -326,6 +333,7 @@
           <li><a href="availability.html">Availability</a></li>
           <li><a href="#lunch" data-page-link="lunch">Lazy Lunches</a></li>
           <li><a href="#gallery" data-page-link="gallery">Gallery</a></li>
+          <li><a href="#google-reviews" data-page-link="google-reviews">Reviews</a></li>
           <li><a href="#about" data-page-link="about">About</a></li>
           <li><a href="#enquiry" data-page-link="enquiry">Enquiry</a></li>
         </ul>
@@ -1281,6 +1289,7 @@ function toggleMobileMenu(){
     gallery: 'gallery',
     about: 'about',
     lunch: 'lunch',
+    'google-reviews': 'home',
     enquiry: 'home'
   };
 
@@ -1294,6 +1303,11 @@ function toggleMobileMenu(){
       setTimeout(() => {
         const enquirySection = document.getElementById('enquiry');
         if (enquirySection) enquirySection.scrollIntoView({ behavior: 'smooth' });
+      }, 120);
+    } else if (target === 'google-reviews') {
+      setTimeout(() => {
+        const reviewsSection = document.getElementById('google-reviews');
+        if (reviewsSection) reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 120);
     } else if (target === 'food' || target === 'pricing') {
       setTimeout(() => {
@@ -1473,10 +1487,10 @@ function toggleMobileMenu(){
       const stars = '★'.repeat(Number(r.star_rating || 0)) + '☆'.repeat(5 - Number(r.star_rating || 0));
       const date = r.create_time ? new Date(r.create_time).toLocaleDateString('en-IN', { month:'short', year:'numeric' }) : '';
       const avatar = r.reviewer_photo_url ? '<img class="google-review-avatar" src="' + ivyGalleryEsc(r.reviewer_photo_url) + '" alt="" loading="lazy">' : '<div class="google-review-avatar"></div>';
-      return '<article class="google-review-card reveal"><div><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></article>';
+      return '<article class="google-review-card"><div><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></article>';
     }).join('');
     section.style.display = '';
-    if (link) { link.href = 'https://www.google.com/maps/search/?api=1&query=Ivy%20House%20Pune'; link.style.display = 'inline-block'; }
+    if (link) { link.href = 'https://www.google.com/maps/place/Ivy+house+(Sunil+Bane),+CP86%2BCG9,+Mandvi+Bk.,+Khadakwadi,+Maharashtra+411023/data=!4m2!3m1!1s0x3bc296fa88d57f9f:0xe13cf170e704ef28?sa=X&ved=1t:242&ictx=111'; link.style.display = 'inline-block'; }
   }
 
   // ── Gallery powered by Supabase ──
