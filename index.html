@@ -212,6 +212,21 @@
     </div>
   </section>
 
+
+  <!-- Google Reviews -->
+  <section class="google-reviews-section" id="google-reviews" style="display:none">
+    <div class="container">
+      <div class="google-reviews-header reveal">
+        <p class="section-label">From Our Guests</p>
+        <h2 class="story-heading">A few kind words<br><em>from Google</em></h2>
+        <div class="divider center"></div>
+        <p>Selected reviews from the Ivy House Google Business Profile.</p>
+      </div>
+      <div class="google-reviews-grid" id="google-reviews-list"></div>
+      <div style="text-align:center"><a class="google-review-link" id="google-reviews-link" href="#" target="_blank" rel="noopener noreferrer" style="display:none">View us on Google →</a></div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="cta-section" id="enquiry">
     <div class="container-narrow">
@@ -1444,6 +1459,27 @@ function toggleMobileMenu(){
 
   prefillEnquiryDatesFromUrl();
 
+  // ── Google Reviews powered by Supabase ──
+  async function loadIvyGoogleReviews() {
+    const section = document.getElementById('google-reviews');
+    const list = document.getElementById('google-reviews-list');
+    const link = document.getElementById('google-reviews-link');
+    if (!section || !list) return;
+    const { data, error } = await ivyGalleryDb.from('google_business_reviews')
+      .select('reviewer_name,reviewer_photo_url,star_rating,comment,create_time,sort_order')
+      .eq('active', true).eq('published_on_website', true).order('sort_order', { ascending: true });
+    if (error || !data?.length) return;
+    list.innerHTML = data.slice(0, 6).map(function(r) {
+      const stars = '★'.repeat(Number(r.star_rating || 0)) + '☆'.repeat(5 - Number(r.star_rating || 0));
+      const date = r.create_time ? new Date(r.create_time).toLocaleDateString('en-IN', { month:'short', year:'numeric' }) : '';
+      const avatar = r.reviewer_photo_url ? '<img class="google-review-avatar" src="' + ivyGalleryEsc(r.reviewer_photo_url) + '" alt="" loading="lazy">' : '<div class="google-review-avatar"></div>';
+      return '<article class="google-review-card reveal"><div><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></article>';
+    }).join('');
+    section.style.display = '';
+    const { data: connection } = await ivyGalleryDb.from('google_business_connections').select('google_maps_url').limit(1).maybeSingle();
+    if (connection?.google_maps_url && link) { link.href = connection.google_maps_url; link.style.display = 'inline-block'; }
+  }
+
   // ── Gallery powered by Supabase ──
   const IVY_SUPABASE_URL = 'https://yiwmtfbqbynimqvwxosu.supabase.co';
   const IVY_SUPABASE_KEY = 'sb_publishable_EG30cid4BV1Uvr6EeM3f9g_hztA7Wpu';
@@ -1571,6 +1607,7 @@ function toggleMobileMenu(){
     if (e.key === 'Escape' && ivyLightbox && ivyLightbox.classList.contains('active')) closeIvyGalleryLightbox();
   });
 
-  loadIvyGallery();</script>
+  loadIvyGallery();
+  loadIvyGoogleReviews();</script>
 </body>
 </html>
