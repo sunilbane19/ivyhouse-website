@@ -21,7 +21,7 @@
 <body>
 <header class="site-nav">
 <a class="logo" href="index.html" aria-label="Ivy House"></a>
-<nav class="nav"><button id="navAvailability" class="active">Availability</button><button id="navGallery">Gallery</button><button id="navReviews">Google Reviews</button><button id="logout">Sign out</button></nav>
+<nav id="adminNav" class="nav" style="display:none"><button id="navAvailability" class="active">Availability</button><button id="navGallery">Gallery</button><button id="navReviews">Google Reviews</button><button id="logout">Sign out</button></nav>
 </header>
 
 <main class="page"><div class="content">
@@ -168,13 +168,13 @@ async function init(){
   const email=(session.user?.email||'').trim().toLowerCase();
   if(email && await isIvyHouseAdmin()){
    window.history.replaceState({},document.title,window.location.pathname);
-   show('login',false);show('app',true);loadAvailability();loadGallery();loadGoogleReviewsAdmin();
+   show('login',false);show('app',true);adminNav.style.display='flex';loadAvailability();loadGallery();loadGoogleReviewsAdmin();
    return;
   }
   await db.auth.signOut({scope:'local'});
   setLoginMessage('This Google account is not authorised for the Ivy House admin.');
  }
- show('app',false);show('login',true);
+ adminNav.style.display='none';show('app',false);show('login',true);
 }
 if(document.getElementById('google')) document.getElementById('google').onclick=async e=>{
  setLoginMessage('Opening Google…');
@@ -220,7 +220,12 @@ async function completeGoogleReviewsOAuth(session,mode){
  if(!session?.provider_token){reviewsStatus.textContent='Google did not return a Business Profile access token. Please try again.';connectGoogleReviews.disabled=false;refreshGoogleReviews.disabled=false;return}
  reviewsStatus.textContent='Connecting to Google Business Profile and importing reviews…';
  const {data,error}=await db.functions.invoke('google-business-reviews',{body:{action:mode==='refresh'?'refresh':'connect',provider_access_token:session.provider_token,provider_refresh_token:session.provider_refresh_token||null}});
- if(error){console.error('Google Reviews function error',error);reviewsStatus.textContent=error.message||'Google Reviews connection failed.';}
+ if(error){
+  console.error('Google Reviews function error',error);
+  let detail=error.message||'Google Reviews connection failed.';
+  try{if(error.context){const body=await error.context.json();detail=body?.error||body?.message||detail;}}catch{}
+  reviewsStatus.textContent=detail;
+ }
  else if(data?.needs_reauthorization){reviewsStatus.textContent='Google Reviews needs to be re-authorised. Click Connect Google Reviews and approve the requested access.';}
  else if(!data?.ok){
   reviewsStatus.textContent=data?.error||'Google Reviews connection failed.';
@@ -234,7 +239,13 @@ async function completeGoogleReviewsOAuth(session,mode){
 async function loadGoogleReviewsAdmin(){
  if(!reviewsGrid)return;
  const {data:statusData,error:statusError}=await db.functions.invoke('google-business-reviews',{body:{action:'status'}});
- if(statusError){reviewsStatus.textContent=statusError.message||'Could not read Google Reviews status.';return}
+ if(statusError){
+  console.error('Google Reviews status error',statusError);
+  let detail=statusError.message||'Could not read Google Reviews status.';
+  try{if(statusError.context){const body=await statusError.context.json();detail=body?.error||body?.message||detail;}}catch{}
+  reviewsStatus.textContent=detail;
+  return;
+ }
  const c=statusData?.connection;
  document.getElementById('reviewsConnectionTitle').textContent=c?'Google Reviews connected':'Google Reviews not connected';
  document.getElementById('reviewsConnectionDetail').textContent=c?(c.google_location_title||c.google_location_name||'Ivy House Google Business Profile'):'Connect the Ivy House Google Business Profile to import reviews.';
