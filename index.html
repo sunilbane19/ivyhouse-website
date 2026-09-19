@@ -1476,8 +1476,7 @@ function toggleMobileMenu(){
       return '<article class="google-review-card reveal"><div><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></article>';
     }).join('');
     section.style.display = '';
-    const { data: connection } = await ivyGalleryDb.from('google_business_connections').select('google_maps_url').limit(1).maybeSingle();
-    if (connection?.google_maps_url && link) { link.href = connection.google_maps_url; link.style.display = 'inline-block'; }
+    if (link) { link.href = 'https://www.google.com/maps/search/?api=1&query=Ivy%20House%20Pune'; link.style.display = 'inline-block'; }
   }
 
   // ── Gallery powered by Supabase ──
