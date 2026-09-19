@@ -27,6 +27,24 @@ function starRating(value: string | undefined): number {
   } as Record<string, number>)[String(value || "").replace("STAR_RATING_", "")] || 5;
 }
 
+async function inspectGoogleTokenScopes(accessToken: string) {
+  const response = await fetch(
+    `https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`
+  );
+  const text = await response.text();
+  let body: any = null;
+  try { body = text ? JSON.parse(text) : null; } catch { body = { raw: text }; }
+  if (!response.ok) {
+    throw new Error(body?.error_description || body?.error || `Google tokeninfo returned HTTP ${response.status}`);
+  }
+  const scopeText = String(body?.scope || "");
+  const scopes = scopeText.split(/\s+/).filter(Boolean);
+  return {
+    scopes,
+    hasBusinessManage: scopes.includes("https://www.googleapis.com/auth/business.manage"),
+  };
+}
+
 async function googleGet(path: string, accessToken: string) {
   const response = await fetch(path, {
     headers: {
@@ -193,6 +211,22 @@ export default {
 
       if (!accessToken) {
         return json({ error: "Google provider access token is required." }, 400);
+      }
+
+      // Diagnostic only: inspect the Google provider token's granted scopes.
+      // Never return the access token itself.
+      const tokenInfo = await inspectGoogleTokenScopes(accessToken);
+      console.log("Google provider token scope check:", {
+        hasBusinessManage: tokenInfo.hasBusinessManage,
+        scopes: tokenInfo.scopes,
+      });
+      if (!tokenInfo.hasBusinessManage) {
+        return json({
+          ok: false,
+          error: "Google access token is missing the Business Profile scope.",
+          granted_scopes: tokenInfo.scopes,
+          required_scope: BUSINESS_SCOPE,
+        }, 403);
       }
 
       if (refreshToken) {
