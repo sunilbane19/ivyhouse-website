@@ -1,37 +1,52 @@
 # Ivy House Website Version
 
-## V3 — Stable, tested baseline
+## V4 — Frozen production release
 
-Date: 2 September 2026
+**Date:** 19 September 2026  
+**Status:** Frozen / production release
 
-This version records the current production state after testing the public Ivy House website and the private Admin function.
+This version is the completed and tested production state of the Ivy House website following the Google Business Profile Reviews integration.
 
-### Tested
-- Public website
-- Admin Google sign-in
-- Admin access control / multiple-admin setup
+### V4 scope
+
+- Public Ivy House website
+- Admin Google sign-in and access control
+- Multiple Ivy House admins
 - Availability
 - Gallery
 - Sign out
-- Desktop flow
-- Mobile flow
+- Desktop and mobile flows
+- Google Business Profile Reviews integration
+- Secure Google Business Profile connection through the existing Google OAuth client
+- Cached Google reviews in Supabase
+- Admin review refresh and editorial Publish controls
+- Public Reviews navigation
+- Public display of up to 15 selected Google reviews
+- Direct link to the Ivy House Google Business Profile listing
+- Google Reviews responsive layout and spacing refinements
+- Removed hardcoded admin email from the gallery migration Edge Function
 
 ### Security baseline
+
 - Admin email is not hard-coded in the client
 - Admin OAuth uses PKCE
+- Google Business Profile access is a separate OAuth flow from normal Admin sign-in
+- Google provider refresh token is stored through Supabase Vault-backed functions
+- Public users can read only active reviews explicitly published to the website
+
+### V4 freeze point
+
+Final Google Reviews display commit before this version record:
+
+`a89ba645a8633fcc6c7af40515097286d80e25f4`
+
+The V4 version record itself is the final commit for this frozen release.
 
 ### Previous milestones
+
 - V1 — stable Ivy House baseline
 - V2 — support for multiple Ivy House admins
+- V3 — stable, tested baseline
+- V4 — Google Reviews integration and final production release
 
-Future changes should start from this V3 baseline.
-
-### Google Reviews integration — September 2026
-- Google Business Profile API access configured using the existing Supabase Google OAuth client
-- Added secure Google Business Profile connection and cached review tables
-- Added Vault-backed Google provider refresh-token storage
-- Added authenticated `google-business-reviews` Edge Function
-- Added Admin Google Reviews connection, refresh and publish controls
-- Added public selected-review display
-- Removed the hardcoded admin email from the gallery migration Edge Function
-- OAuth connection remains a separate flow from normal Ivy House Admin sign-in
+**V4 is now closed for development. Future changes should start as a new version from this frozen baseline.**
