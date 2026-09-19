@@ -225,7 +225,7 @@
     <div class="container">
       <div class="google-reviews-header reveal">
         <p class="section-label">From Our Guests</p>
-        <h2 class="story-heading">A few kind words<br><em>from Google</em></h2>
+        <h2 class="story-heading google-reviews-title">A few kind words <em>from Google</em></h2>
         <div class="divider center"></div>
         <p>Selected reviews from the Ivy House Google Business Profile.</p>
       </div>
@@ -1487,7 +1487,7 @@ function toggleMobileMenu(){
       const stars = '★'.repeat(Number(r.star_rating || 0)) + '☆'.repeat(5 - Number(r.star_rating || 0));
       const date = r.create_time ? new Date(r.create_time).toLocaleDateString('en-IN', { month:'short', year:'numeric' }) : '';
       const avatar = r.reviewer_photo_url ? '<img class="google-review-avatar" src="' + ivyGalleryEsc(r.reviewer_photo_url) + '" alt="" loading="lazy">' : '<div class="google-review-avatar"></div>';
-      return '<article class="google-review-card"><div class="google-review-heading"><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></div></div></article>';
+      return '<article class="google-review-card"><div class="google-review-heading"><div class="google-review-stars" aria-label="' + Number(r.star_rating || 0) + ' out of 5 stars">' + stars + '</div><div class="google-review-meta">' + avatar + '<span>' + ivyGalleryEsc(r.reviewer_name || 'Google guest') + (date ? ' · ' + ivyGalleryEsc(date) : '') + '</span></div></div><p class="google-review-text">“' + ivyGalleryEsc(r.comment || 'A Google review for Ivy House.') + '”</p></article>';
     }).join('');
     section.style.display = '';
     if (link) { link.href = 'https://www.google.com/maps/place/Ivy+house+(Sunil+Bane),+CP86%2BCG9,+Mandvi+Bk.,+Khadakwadi,+Maharashtra+411023/data=!4m2!3m1!1s0x3bc296fa88d57f9f:0xe13cf170e704ef28?sa=X&ved=1t:242&ictx=111'; link.style.display = 'inline-block'; }
