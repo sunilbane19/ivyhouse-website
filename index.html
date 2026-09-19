@@ -1483,7 +1483,7 @@ function toggleMobileMenu(){
       .select('reviewer_name,reviewer_photo_url,star_rating,comment,create_time,sort_order')
       .eq('active', true).eq('published_on_website', true).order('sort_order', { ascending: true });
     if (error || !data?.length) return;
-    list.innerHTML = data.slice(0, 6).map(function(r) {
+    list.innerHTML = data.slice(0, 15).map(function(r) {
       const stars = '★'.repeat(Number(r.star_rating || 0)) + '☆'.repeat(5 - Number(r.star_rating || 0));
       const date = r.create_time ? new Date(r.create_time).toLocaleDateString('en-IN', { month:'short', year:'numeric' }) : '';
       const avatar = r.reviewer_photo_url ? '<img class="google-review-avatar" src="' + ivyGalleryEsc(r.reviewer_photo_url) + '" alt="" loading="lazy">' : '<div class="google-review-avatar"></div>';
