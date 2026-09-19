@@ -127,12 +127,12 @@ export default {
     if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
     if (req.method !== "POST") return json({ error: "POST required" }, 405);
 
-    const adminUserId = String(ctx.userClaims?.sub || "");
+    const adminUserId = String(ctx.userClaims?.id || ctx.jwtClaims?.sub || "");
     if (!adminUserId) return json({ error: "Unauthorized" }, 401);
 
     // Resolve the authenticated user through Supabase Auth, then use the
     // existing Ivy House admin allow-list. Do not depend on an email claim
-    // being present in the Edge Function JWT.
+    // being present in the Edge Function JWT. `ctx.userClaims.id` is the\n    // normalized Supabase user id; `jwtClaims.sub` is retained as a fallback.
     const { data: authUser, error: authUserError } =
       await ctx.supabaseAdmin.auth.admin.getUserById(adminUserId);
 
