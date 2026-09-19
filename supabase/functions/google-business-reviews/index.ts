@@ -130,10 +130,19 @@ export default {
     const adminUserId = String(ctx.userClaims?.sub || "");
     if (!adminUserId) return json({ error: "Unauthorized" }, 401);
 
-    // Use the same admin authorization function as the Admin UI.
-    // This avoids depending on a particular JWT claim shape for the email.
-    const { data: isAdmin, error: adminError } = await ctx.supabase.rpc("is_ivy_house_admin");
-    if (adminError || isAdmin !== true) return json({ error: "Not authorized" }, 403);
+    const callerEmail = String(ctx.userClaims?.email || "").trim().toLowerCase();
+    const { data: admin, error: adminError } = await ctx.supabaseAdmin
+      .from("ivy_house_admins")
+      .select("id,email,active")
+      .eq("email", callerEmail)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (adminError) {
+      console.error("Admin lookup failed:", adminError.message);
+      return json({ error: "Admin authorization check failed." }, 500);
+    }
+    if (!admin) return json({ error: "Not authorized" }, 403);
 
     let body: any = {};
     try { body = await req.json(); } catch {}
