@@ -130,7 +130,18 @@ export default {
     const adminUserId = String(ctx.userClaims?.sub || "");
     if (!adminUserId) return json({ error: "Unauthorized" }, 401);
 
-    const callerEmail = String(ctx.userClaims?.email || "").trim().toLowerCase();
+    // Resolve the authenticated user through Supabase Auth, then use the
+    // existing Ivy House admin allow-list. Do not depend on an email claim
+    // being present in the Edge Function JWT.
+    const { data: authUser, error: authUserError } =
+      await ctx.supabaseAdmin.auth.admin.getUserById(adminUserId);
+
+    if (authUserError || !authUser?.user?.email) {
+      console.error("Authenticated user lookup failed:", authUserError?.message || "no email");
+      return json({ error: "Could not verify the signed-in Admin account." }, 401);
+    }
+
+    const callerEmail = authUser.user.email.trim().toLowerCase();
     const { data: admin, error: adminError } = await ctx.supabaseAdmin
       .from("ivy_house_admins")
       .select("id,email,active")
