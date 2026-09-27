@@ -1,0 +1,18 @@
+{
+  "name": "Ivy House Pune",
+  "short_name": "Ivy House",
+  "description": "Ivy House Pune — a private countryside home for stays, gatherings and lazy lunches.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#2d4a2d",
+  "icons": [
+    {
+      "src": "./assets/ivy-house-pwa-icon-v5.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

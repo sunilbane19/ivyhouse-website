@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2d4a2d">
+<link rel="manifest" href="./manifest-v5.webmanifest">
+<link rel="apple-touch-icon" href="./assets/ivy-house-pwa-icon-v5.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ivy House">
 <title>Ivy House Pune | Private Farm Stay, Garden Gatherings & Retreat Space</title>
 <meta name="description" content="Ivy House is a private farm house in Pune offering overnight stays, small garden gatherings, creative retreats and peaceful escapes in nature. Ideal for families, workshops and intimate celebrations.">
 
@@ -108,7 +114,12 @@
 <script>
   gtag('event', 'conversion', {'send_to': 'AW-963804592/1xfFCKzVoI0cELD7ycsD'});
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+</script>\n</head>
 <body>
 
 <!-- NAVIGATION -->
@@ -336,6 +347,7 @@
           <li><a href="#google-reviews" data-page-link="google-reviews">Reviews</a></li>
           <li><a href="#about" data-page-link="about">About</a></li>
           <li><a href="#enquiry" data-page-link="enquiry">Enquiry</a></li>
+          <li><a href="admin.html">Admin</a></li>
         </ul>
       </div>
       <div class="footer-col">
