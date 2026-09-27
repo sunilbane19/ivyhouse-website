@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Ivy House">
+  <rect width="512" height="512" rx="96" fill="#2d4a2d"/>
+  <path d="M112 292 256 142l144 150v112H112Z" fill="#f5f0e8"/>
+  <path d="M196 404V286h120v118" fill="#2d4a2d"/>
+  <path d="M82 298 256 116l174 182-26 24L256 168 108 322Z" fill="#f5f0e8"/>
+  <path d="M128 236c28-26 56-38 86-36 30 2 53 18 68 47-25-15-49-19-72-10-24 9-43 27-57 54-14-21-22-39-25-55Z" fill="#2d4a2d"/>
+</svg>
