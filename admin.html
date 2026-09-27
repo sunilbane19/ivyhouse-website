@@ -162,6 +162,15 @@ async function isIvyHouseAdmin(){
 }
 async function init(){
  await handleOAuthCallback();
+ const signedOut=new URLSearchParams(window.location.search).get('signed_out')==='1';
+ if(signedOut){
+  try{localStorage.removeItem('ivyhouse-admin-auth');}catch{}
+  try{sessionStorage.removeItem('ivy-google-reviews-mode');}catch{}
+  adminNav.style.display='none';show('app',false);show('login',true);
+  setLoginMessage('Signed out.');
+  window.history.replaceState({},document.title,window.location.pathname);
+  return;
+ }
  const {data:{session},error}=await db.auth.getSession();
  if(error){setLoginMessage(error.message);return}
  if(session){
