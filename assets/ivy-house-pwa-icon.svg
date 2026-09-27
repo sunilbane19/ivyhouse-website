@@ -1,33 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="108" fill="#faf9f4"/>
-  <rect x="8" y="8" width="496" height="496" rx="100" fill="none" stroke="#e7dfcf" stroke-width="10"/>
-
-  <g fill="#1f4b2a">
-    <path d="M256 72
-      C240 112 210 132 211 166
-      C212 190 226 205 244 216
-      C230 239 218 257 217 283
-      C203 263 186 248 159 250
-      C177 274 191 288 216 291
-      C216 326 226 351 249 367
-      C244 341 252 319 270 302
-      C291 283 301 263 301 236
-      C279 247 264 264 256 286
-      C252 260 256 235 272 213
-      C292 185 310 163 306 131
-      C285 144 268 163 257 188
-      C246 163 239 137 256 72 Z"/>
-    <path d="M257 367
-      C265 344 277 330 295 320
-      C298 342 289 359 270 374
-      C264 379 259 376 257 367 Z"/>
+  <rect x="10" y="10" width="492" height="492" rx="100" fill="none" stroke="#e7dfcf" stroke-width="9"/>
+  <g fill="#1f4b2a" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700">
+    <text x="256" y="286" font-size="112" letter-spacing="2">IVY</text>
+    <text x="256" y="395" font-size="101" letter-spacing="1">HOUSE</text>
   </g>
-
-  <g fill="#1f4b2a" text-anchor="middle"
-     font-family="Georgia, 'Times New Roman', serif"
-     font-weight="700">
-    <text x="256" y="405" font-size="92" letter-spacing="2">IVY</text>
-    <text x="256" y="474" font-size="86" letter-spacing="1">HOUSE</text>
-  </g>
-  <path d="M150 490 H362" stroke="#1f4b2a" stroke-width="5"/>
 </svg>
