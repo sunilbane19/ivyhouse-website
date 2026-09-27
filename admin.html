@@ -189,13 +189,14 @@ if(document.getElementById('google')) document.getElementById('google').onclick=
 document.getElementById('logout').onclick=async()=>{
  logout.disabled=true;
  logout.textContent='Signing out…';
- try{await db.auth.signOut({scope:'local'});}catch(e){console.error('Admin sign-out error:',e)}
+ try{sessionStorage.setItem('ivy-admin-signed-out','1');}catch{}
+ try{await db.auth.signOut({scope:'local'});}catch(e){console.error('Admin local sign-out error:',e)}
+ try{await db.auth.signOut({scope:'global'});}catch(e){console.warn('Admin global sign-out unavailable:',e)}
  try{localStorage.removeItem('ivyhouse-admin-auth');}catch{}
  try{sessionStorage.removeItem('ivy-google-reviews-mode');}catch{}
  show('app',false);show('login',true);adminNav.style.display='none';
  setLoginMessage('Signed out.');
- window.history.replaceState({},document.title,window.location.pathname);
- setTimeout(()=>window.location.reload(),50);
+ window.location.replace(window.location.pathname+'?signed_out=1');
 };
 db.auth.onAuthStateChange(async (event,session)=>{
  if(session?.user?.email && await isIvyHouseAdmin()){
