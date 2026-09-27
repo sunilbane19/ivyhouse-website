@@ -2,7 +2,7 @@ name: Deploy Ivy House site to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["v5-pwa"]
   workflow_dispatch:
 
 concurrency:
