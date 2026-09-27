@@ -1,4 +1,4 @@
-const CACHE_NAME = "ivy-house-v5-shell";
+const CACHE_NAME = "ivy-house-v5-shell-v2";
 const BASE = self.registration.scope;
 const APP_SHELL = [
   BASE,
