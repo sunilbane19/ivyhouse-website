@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2d4a2d">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/assets/ivy-house-pwa-icon.svg">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./images/logo-ivy-house1.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Ivy House">
@@ -117,7 +117,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
   }
 </script>\n</head>
 <body>
