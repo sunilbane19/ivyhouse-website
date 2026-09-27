@@ -1,27 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="104" fill="#f7f3eb"/>
-  <rect x="18" y="18" width="476" height="476" rx="92" fill="none" stroke="#e5dfd2" stroke-width="5"/>
 
-  <!-- Ivy sprig -->
-  <g fill="none" stroke="#2d4a2d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M104 168 C92 205 94 240 112 269 C126 291 132 313 127 337"/>
-    <path d="M105 190 C84 178 73 161 75 142 C94 143 108 156 105 190Z" fill="#2d4a2d" stroke="none"/>
-    <path d="M101 225 C80 220 67 207 64 190 C83 187 99 198 101 225Z" fill="#2d4a2d" stroke="none"/>
-    <path d="M116 258 C139 251 154 237 158 218 C137 218 121 232 116 258Z" fill="#2d4a2d" stroke="none"/>
-    <path d="M126 301 C106 295 93 282 91 265 C110 264 124 276 126 301Z" fill="#2d4a2d" stroke="none"/>
+  <g fill="#2d4a2d" text-anchor="middle">
+    <text x="256" y="205"
+          font-family="Georgia, 'Times New Roman', serif"
+          font-size="88" font-weight="600" letter-spacing="1.5">IVY HOUSE</text>
+
+    <text x="256" y="310"
+          font-family="cursive, 'Brush Script MT', 'Segoe Script'"
+          font-size="76" font-style="italic">Experiences</text>
+
+    <path d="M145 356 H367"
+          stroke="#2d4a2d" stroke-width="5" stroke-linecap="round"/>
   </g>
-
-  <!-- Ivy House -->
-  <text x="304" y="214" text-anchor="middle"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="61" font-weight="600" letter-spacing="1.5"
-        fill="#2d4a2d">IVY HOUSE</text>
-
-  <!-- Experiences -->
-  <text x="256" y="303" text-anchor="middle"
-        font-family="cursive, 'Brush Script MT', 'Segoe Script'"
-        font-size="57" font-style="italic"
-        fill="#2d4a2d">Experiences</text>
-
-  <path d="M151 350 H361" stroke="#2d4a2d" stroke-width="4" stroke-linecap="round"/>
 </svg>
