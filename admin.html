@@ -186,7 +186,17 @@ if(document.getElementById('google')) document.getElementById('google').onclick=
  if(error){google.disabled=false;setLoginMessage(error.message);console.error('Google sign-in error:',error)}
  else if(data?.url){window.location.assign(data.url)}
 };
-document.getElementById('logout').onclick=async()=>{await db.auth.signOut({scope:'local'});location.href=REDIRECT};
+document.getElementById('logout').onclick=async()=>{
+ logout.disabled=true;
+ logout.textContent='Signing out…';
+ try{await db.auth.signOut({scope:'local'});}catch(e){console.error('Admin sign-out error:',e)}
+ try{localStorage.removeItem('ivyhouse-admin-auth');}catch{}
+ try{sessionStorage.removeItem('ivy-google-reviews-mode');}catch{}
+ show('app',false);show('login',true);adminNav.style.display='none';
+ setLoginMessage('Signed out.');
+ window.history.replaceState({},document.title,window.location.pathname);
+ setTimeout(()=>window.location.reload(),50);
+};
 db.auth.onAuthStateChange(async (event,session)=>{
  if(session?.user?.email && await isIvyHouseAdmin()){
   show('login',false);show('app',true);
