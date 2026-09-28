@@ -1,0 +1,107 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Query Supabase roughly every 3 days so the project has regular activity.
+    - cron: "23 3 */3 * *"
+    # Also make a harmless repository commit on the first of each month.
+    - cron: "53 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Query Supabase
+        id: supabase
+        env:
+          SUPABASE_URL: https://yiwmtfbqbynimqvwxosu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY repository secret is not configured."
+            exit 1
+          fi
+
+          curl --fail-with-body --silent --show-error \
+            --retry 3 \
+            --retry-delay 5 \
+            "${SUPABASE_URL}/rest/v1/availability_blocks?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}"
+
+          echo
+          echo "Ivy House Supabase keepalive request completed successfully."
+
+      - name: Send keepalive email
+        if: always()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SUPABASE_STATUS: ${{ steps.supabase.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::error::RESEND_API_KEY repository secret is not configured."
+            exit 1
+          fi
+
+          if [ "${SUPABASE_STATUS}" = "success" ]; then
+            SUBJECT="Ivy House Supabase keepalive: SUCCESS"
+            BODY="Ivy House Supabase keepalive completed successfully. Supabase project: yiwmtfbqbynimqvwxosu. Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC'). GitHub Actions run: ${RUN_URL}"
+          else
+            SUBJECT="Ivy House Supabase keepalive: FAILED"
+            BODY="Ivy House Supabase keepalive failed. Supabase project: yiwmtfbqbynimqvwxosu. Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC'). Check the GitHub Actions run: ${RUN_URL}"
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg from "notifications@coepentc83.com" \
+            --arg to "sunilbane19@gmail.com" \
+            --arg subject "${SUBJECT}" \
+            --arg text "${BODY}" \
+            '{from:$from,to:[$to],subject:$subject,text:$text}')
+
+          curl --fail-with-body --silent --show-error \
+            --retry 3 \
+            --retry-delay 5 \
+            https://api.resend.com/emails \
+            -H "Authorization: Bearer ${RESEND_API_KEY}" \
+            -H "Content-Type: application/json" \
+            --data "${PAYLOAD}"
+
+          echo
+          echo "Keepalive notification sent."
+
+      - name: Checkout repository
+        if: github.event.schedule == '53 3 1 * *'
+        uses: actions/checkout@v4
+
+      - name: Update monthly keepalive marker
+        if: github.event.schedule == '53 3 1 * *'
+        run: |
+          mkdir -p .github/keepalive
+          printf 'Last repository keepalive: %s\n' "$(date -u '+%Y-%m-%d %H:%M:%S UTC')" > .github/keepalive/status.txt
+
+      - name: Commit monthly keepalive marker
+        if: github.event.schedule == '53 3 1 * *'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/keepalive/status.txt
+          git diff --cached --quiet || git commit -m "chore: update keepalive marker"
+          git push
+
+      - name: Preserve Supabase result
+        if: always()
+        run: |
+          if [ "${{ steps.supabase.outcome }}" != "success" ]; then
+            echo "::error::Ivy House Supabase keepalive failed."
+            exit 1
+          fi
