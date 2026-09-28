@@ -62,7 +62,7 @@ jobs:
           fi
 
           PAYLOAD=$(jq -n \
-            --arg from "notifications@coepentc83.com" \
+            --arg from "notifications@ivyhouse.in" \
             --arg to "sunilbane19@gmail.com" \
             --arg subject "${SUBJECT}" \
             --arg text "${BODY}" \
