@@ -42,24 +42,19 @@
     line-height: 1.15;
   }
 
-  /* One simple, swipeable row rather than several wrapped rows. */
+  /* Wrap gallery categories onto multiple rows on mobile.
+     This keeps every category visible without horizontal scrolling. */
   #page-gallery .gallery-filters {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: visible;
     gap: 8px;
-    margin: 0 -16px 28px;
-    padding: 8px 16px 12px;
+    margin: 0 -8px 28px;
+    padding: 8px 8px 12px;
     position: sticky;
     top: 64px;
     z-index: 20;
     background: var(--warm-white);
-  }
-
-  #page-gallery .gallery-filters::-webkit-scrollbar {
-    display: none;
   }
 
   #page-gallery .gallery-filter-btn {
