@@ -45,12 +45,16 @@
   /* Wrap gallery categories onto multiple rows on mobile.
      This keeps every category visible without horizontal scrolling. */
   #page-gallery .gallery-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
     justify-content: center;
-    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     overflow: visible;
     gap: 8px;
-    margin: 0 -8px 28px;
-    padding: 8px 8px 12px;
+    margin: 0 0 28px;
+    padding: 8px 0 12px;
     position: sticky;
     top: 64px;
     z-index: 20;
