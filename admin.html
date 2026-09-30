@@ -389,7 +389,8 @@ function renderItems(){
    '<div class="thumb">'+media+'</div>'+
    '<div class="media-body">'+
    '<input class="input caption" data-id="'+it.id+'" value="'+escHtml(it.caption||'')+'" placeholder="Caption">'+
-   '<div class="file-meta"><strong>File:</strong> '+escHtml((it.storage_path||it.source_path||'').split('/').pop()||'Not available')+'</div>'+\n    '<details class="section-picker"><summary>Sections <span class="section-summary-text">'+sectionNames+'</span></summary>'+
+   '<div class="file-meta"><strong>File:</strong> '+escHtml((it.storage_path||it.source_path||'').split('/').pop()||'Not available')+'</div>'+
+    '<details class="section-picker"><summary>Sections <span class="section-summary-text">'+sectionNames+'</span></summary>'+
    '<div class="section-menu">'+sectionChecks+'</div></details>'+
    '<div class="media-actions">'+
    '<button class="btn small" data-save-item="'+it.id+'">Save</button>'+
