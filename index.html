@@ -1532,15 +1532,13 @@ function toggleMobileMenu(){
       console.error('Gallery could not be loaded', catRes.error || itemRes.error || linkRes.error);
       return;
     }
+
     const categories = catRes.data || [];
     const items = itemRes.data || [];
     const links = linkRes.data || [];
     const filters = document.getElementById('gallery-filters');
     const sections = document.getElementById('gallery-sections');
-    if (!filters || !sections) return;
-
-    filters.innerHTML = '<button type="button" class="gallery-filter-btn active" data-gallery-filter="all" aria-pressed="true">All</button>' +
-      categories.map(c => '<button type="button" class="gallery-filter-btn" data-gallery-filter="' + ivyGalleryEsc(c.slug) + '" aria-pressed="false">' + ivyGalleryEsc(c.name) + '</button>').join('');
+    if (!filters || !sections || !categories.length) return;
 
     function sourceFor(item) {
       return item.storage_path
@@ -1548,24 +1546,71 @@ function toggleMobileMenu(){
         : 'https://raw.githubusercontent.com/sunilbane19/ivyhouse-website/main/' + item.source_path;
     }
 
-    sections.innerHTML = categories.map(category => {
-      const categoryLinks = links.filter(l => l.category_id === category.id).sort((a,b) => a.sort_order - b.sort_order);
-      const categoryItems = categoryLinks.map(link => items.find(item => item.id === link.item_id)).filter(Boolean);
+    function itemsForCategory(category) {
+      const categoryLinks = links
+        .filter(l => l.category_id === category.id)
+        .sort((a,b) => a.sort_order - b.sort_order);
+      return categoryLinks
+        .map(link => items.find(item => item.id === link.item_id))
+        .filter(Boolean);
+    }
+
+    // Build the category controls, but render only the selected category.
+    // "All" remains available and loads every category only when requested.
+    filters.innerHTML = '<button type="button" class="gallery-filter-btn active" data-gallery-filter="' +
+      ivyGalleryEsc(categories[0].slug) + '" aria-pressed="true">' + ivyGalleryEsc(categories[0].name) + '</button>' +
+      '<button type="button" class="gallery-filter-btn" data-gallery-filter="all" aria-pressed="false">All</button>' +
+      categories.slice(1).map(c => '<button type="button" class="gallery-filter-btn" data-gallery-filter="' +
+        ivyGalleryEsc(c.slug) + '" aria-pressed="false">' + ivyGalleryEsc(c.name) + '</button>').join('');
+
+    function renderCategory(category) {
+      const categoryItems = itemsForCategory(category);
       const cards = categoryItems.map(item => {
         const src = sourceFor(item);
         const caption = item.caption || 'Ivy House';
+
+        // Videos deliberately have no <video src> in the grid.
+        // The MP4 is fetched only after the visitor opens the lightbox.
         if (item.media_type === 'video') {
-          return '<div class="gallery-card gallery-card--video" data-gallery-categories="' + ivyGalleryEsc(category.slug) + '" data-src="' + ivyGalleryEsc(src) + '" data-type="video" data-caption="' + ivyGalleryEsc(caption) + '">' +
-            '<video src="' + ivyGalleryEsc(src) + '" class="gallery-card-media" preload="metadata" muted playsinline></video>' +
-            '<div class="gallery-card-play"><i class="fa-solid fa-play"></i></div></div>';
+          return '<div class="gallery-card gallery-card--video" data-gallery-categories="' +
+            ivyGalleryEsc(category.slug) + '" data-src="' + ivyGalleryEsc(src) +
+            '" data-type="video" data-caption="' + ivyGalleryEsc(caption) + '">' +
+            '<div class="gallery-card-media gallery-video-placeholder" role="img" aria-label="' +
+            ivyGalleryEsc(caption) + '"><div class="gallery-card-play"><i class="fa-solid fa-play"></i></div></div></div>';
         }
-        return '<div class="gallery-card" data-gallery-categories="' + ivyGalleryEsc(category.slug) + '" data-src="' + ivyGalleryEsc(src) + '" data-type="image" data-caption="' + ivyGalleryEsc(caption) + '">' +
-          '<img src="' + ivyGalleryEsc(src) + '" alt="' + ivyGalleryEsc(item.alt_text || caption) + '" class="gallery-card-media"></div>';
+
+        return '<div class="gallery-card" data-gallery-categories="' + ivyGalleryEsc(category.slug) +
+          '" data-src="' + ivyGalleryEsc(src) + '" data-type="image" data-caption="' +
+          ivyGalleryEsc(caption) + '">' +
+          '<img src="' + ivyGalleryEsc(src) + '" alt="' + ivyGalleryEsc(item.alt_text || caption) +
+          '" class="gallery-card-media" loading="lazy" decoding="async"></div>';
       }).join('');
-      return '<div class="gallery-category-section reveal" data-gallery-category="' + ivyGalleryEsc(category.slug) + '">' +
+
+      return '<div class="gallery-category-section" data-gallery-category="' +
+        ivyGalleryEsc(category.slug) + '">' +
         '<h3 class="gallery-category-title">' + ivyGalleryEsc(category.name) + '</h3>' +
         '<div class="gallery-category-grid">' + cards + '</div></div>';
-    }).join('');
+    }
+
+    function renderGallery(filter) {
+      if (filter === 'all') {
+        sections.innerHTML = categories.map(renderCategory).join('');
+      } else {
+        const category = categories.find(c => c.slug === filter);
+        sections.innerHTML = category ? renderCategory(category) : '';
+      }
+
+      sections.querySelectorAll('.gallery-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+          e.preventDefault();
+          openIvyGalleryLightbox(card.getAttribute('data-src'), card.getAttribute('data-type') || 'image');
+        });
+      });
+    }
+
+    // Initial load: one category only. This avoids downloading the whole Gallery
+    // just because the Gallery page was opened.
+    renderGallery(categories[0].slug);
 
     filters.querySelectorAll('[data-gallery-filter]').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -1575,17 +1620,7 @@ function toggleMobileMenu(){
           b.classList.toggle('active', active);
           b.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
-        sections.querySelectorAll('.gallery-category-section').forEach(function(section) {
-          const slug = section.getAttribute('data-gallery-category');
-          section.style.display = (filter === 'all' || slug === filter) ? '' : 'none';
-        });
-      });
-    });
-
-    sections.querySelectorAll('.gallery-card').forEach(function(card) {
-      card.addEventListener('click', function(e) {
-        e.preventDefault();
-        openIvyGalleryLightbox(card.getAttribute('data-src'), card.getAttribute('data-type') || 'image');
+        renderGallery(filter);
       });
     });
   }
