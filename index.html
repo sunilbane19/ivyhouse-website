@@ -1586,7 +1586,7 @@ function toggleMobileMenu(){
           '" class="gallery-card-media" loading="lazy" decoding="async"></div>';
       }).join('');
 
-      return '<div class="gallery-category-section reveal" data-gallery-category="' +
+      return '<div class="gallery-category-section" data-gallery-category="' +
         ivyGalleryEsc(category.slug) + '">' +
         '<h3 class="gallery-category-title">' + ivyGalleryEsc(category.name) + '</h3>' +
         '<div class="gallery-category-grid">' + cards + '</div></div>';
