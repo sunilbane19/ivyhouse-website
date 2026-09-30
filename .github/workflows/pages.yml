@@ -1,33 +1,22 @@
-name: Deploy Ivy House site to GitHub Pages
+name: V5 Staging Check (no production deployment)
 
 on:
   push:
     branches: ["v5-pwa"]
   workflow_dispatch:
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  deploy:
+  check:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
-      id-token: write
     steps:
-      - name: Checkout
+      - name: Checkout V5 staging branch
         uses: actions/checkout@v6
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: '.'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Verify V5 entry points
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f styles-base.css
+          test -f sw.js
+          test -f manifest-v5.webmanifest
