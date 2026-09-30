@@ -1,4 +1,5 @@
 name: Deploy Ivy House site to GitHub Pages
+# Production remains on main; V5 staging must not deploy to this Pages site.
 
 on:
   push:
