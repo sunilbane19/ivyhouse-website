@@ -2,7 +2,7 @@ name: Deploy Ivy House site to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["v4-pages-restore"]
   workflow_dispatch:
 
 concurrency:
